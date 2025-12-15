@@ -52,11 +52,11 @@ const allProducts = [
     id: 5,
         name: "Fبنطلون",
         price: 20000,
-        image: "images/بنطلون.jpg",
+        image: "images/pant.jpg",
         description: "بنطلون قماش رسمي.",
         sizes: ["30","31", "32", "33","34"],
         colors: ["اسود"],
-        gallery: ["images/بنطلون.jpg"]
+        gallery: ["images/pant.jpg"]
 ];
 
 // ==========================================
@@ -286,4 +286,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 function logoutUser() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
+
 
