@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سلة المشتريات</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: white; }
+        th, td { padding: 15px; border-bottom: 1px solid #ddd; text-align: center; }
+        th { background: #f8f9fa; }
+        .cart-summary { background: white; padding: 20px; border-radius: 10px; text-align: left; width: 300px; margin-right: auto; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Urban Gent</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">الرئيسية</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>سلة المشتريات</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>الصورة</th>
+                    <th>المنتج</th>
+                    <th>السعر</th>
+                    <th>الكمية</th>
+                    <th>حذف</th>
+                </tr>
+            </thead>
+            <tbody id="cart-items-container">
+                </tbody>
+        </table>
+
+        <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+            
+            <div style="background: white; padding: 20px; border-radius: 10px; height: fit-content;">
+                <h3>كود الخصم</h3>
+                <input type="text" id="coupon-code" placeholder="أدخل الكود هنا" style="padding: 10px;">
+                <button onclick="applyCoupon()" style="padding: 10px; background: #2c3e50; color: white; border: none;">تطبيق</button>
+                <p style="font-size: 0.8em; color: gray;">جرب كود: IQ2025</p>
+            </div>
+
+            <div class="cart-summary">
+                <h3>ملخص الطلب</h3>
+                <p>المجموع الكلي: <strong id="final-total" style="font-size: 1.4em; color: #1abc9c;">0</strong> د.ع</p>
+                <button onclick="checkoutWhatsApp()" style="width: 100%; padding: 15px; background: #25D366; color: white; border: none; font-weight: bold; font-size: 1.1em; cursor: pointer;">
+                    إتمام الطلب عبر واتساب 📱
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
