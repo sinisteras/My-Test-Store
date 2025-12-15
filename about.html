@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قصتي - Urban Gent</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* تنسيق بسيط وأنيق للرسالة الشخصية */
+        .story-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .story-title {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 30px;
+            position: relative;
+            display: inline-block;
+        }
+        /* خط تجميلي تحت العنوان */
+        .story-title::after {
+            content: '';
+            display: block;
+            width: 50%;
+            height: 3px;
+            background: #1abc9c;
+            margin: 10px auto 0;
+        }
+        .story-text {
+            font-size: 1.2em;
+            line-height: 1.8;
+            color: #555;
+            text-align: justify; /* محاذاة النص ليكون مرتباً */
+            text-align-last: center; /* آخر سطر في الوسط */
+        }
+        .signature {
+            margin-top: 40px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: bold;
+            font-size: 1.5em;
+            color: #2c3e50;
+        }
+        .role {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            font-weight: normal;
+        }
+        
+        /* تصميم بسيط للأيقونات في الأسفل */
+        .values-grid {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 60px;
+            flex-wrap: wrap;
+        }
+        .value-item {
+            text-align: center;
+            width: 150px;
+        }
+        .value-icon { font-size: 2.5em; margin-bottom: 10px; display: block; }
+        .value-text { color: #2c3e50; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Urban Gent</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">الرئيسية</a></li>
+                <li><a href="cart.html">السلة</a></li>
+            </ul>
+        </nav>
+        <div id="cart-container">
+            <a href="cart.html" style="text-decoration: none; color: white;">
+                🛒 <span id="cart-count">0</span>
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <div class="story-container">
+            <h2 class="story-title">شغف، وليس مجرد متجر</h2>
+            
+            <div class="story-text">
+                <p>
+                    مرحباً بك في Urban Gent.
+                    <br><br>
+                    لم أقم بإنشاء هذا المتجر ليكون مجرد مكان لبيع الملابس، بل بدأته من حاجة شخصية وشغف حقيقي بالتفاصيل. لطالما آمنت أن ما نرتديه يعكس شخصيتنا، لكنني كنت دائماً أجد صعوبة في العثور على قطع تجمع بين "الأناقة العصرية" و"الجودة العالية" و"السعر المنطقي" في مكان واحد.
+                </p>
+                <p>
+                    لذلك قررت أن أصنع هذا المكان بنفسي.
+                </p>
+                <p>
+                    كل قطعة تراها هنا لم يتم وضعها عشوائياً. <strong>أنا أختار القطع التي أقبل أن أرتديها أنا شخصياً</strong>، وأتأكد من خاماتها وتفاصيلها قبل عرضها عليك. هدفي ليس بيع أكبر عدد من القطع، بل أن تشعر بالثقة والتميز عندما ترتدي شيئاً من اختيارنا.
+                </p>
+                <p>
+                    شكراً لثقتك ودعمك لهذا المشروع.
+                </p>
+            </div>
+
+            <div class="signature">
+                مؤسس المتجر
+                <div class="role">Urban Gent</div>
+            </div>
+        </div>
+
+        <div class="values-grid">
+            <div class="value-item">
+                <span class="value-icon">💎</span>
+                <span class="value-text">ذوق رفيع</span>
+            </div>
+            <div class="value-item">
+                <span class="value-icon">👁️</span>
+                <span class="value-text">اختيار دقيق</span>
+            </div>
+            <div class="value-item">
+                <span class="value-icon">🤝</span>
+                <span class="value-text">ثقة ومصداقية</span>
+            </div>
+        </div>
+
+    </main>
+
+    <footer style="background: #2c3e50; color: white; padding: 40px 20px; margin-top: 50px;">
+        <div style="display: flex; justify-content: space-around; flex-wrap: wrap; text-align: right;">
+            <div>
+                <h3>Urban Gent</h3>
+                <p>الأناقة.. تبدأ باختيار صحيح.</p>
+            </div>
+            <div>
+                <h3>روابط سريعة</h3>
+                <ul style="line-height: 2;">
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="about.html" style="color: #1abc9c;">من نحن</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>تواصل معي</h3>
+                <p>📞 07724329890</p>
+                <p>📍 بغداد</p>
+            </div>
+        </div>
+        <p style="text-align: center; margin-top: 30px; border-top: 1px solid #555; padding-top: 20px;">&copy; 2025 Urban Gent. جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
