@@ -48,7 +48,7 @@ const allProducts = [
         colors: ["رمادي", "أحمر", "أصفر"],
         // مثال: 3 صور لنفس السويتر
         gallery: ["images/sweater.jpg", "images/sweater_red.jpg", "images/sweater_yellow.jpg"]
-    }
+    },
     id: 5,
         name: "Fبنطلون",
         price: 20000,
@@ -286,5 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 function logoutUser() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
+
 
 
