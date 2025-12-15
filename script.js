@@ -1,21 +1,22 @@
 // ==========================================
 // ⚙️ إعدادات المتجر
 // ==========================================
-const MY_PHONE_NUMBER = "9647724329890"; // 🔴 ضع رقمك هنا
+const MY_PHONE_NUMBER = "9647724329890"; // 🔴 ضع رقمك
 
 // ==========================================
-// 📦 1. قاعدة بيانات المنتجات (مع الألوان والقياسات)
+// 📦 1. قاعدة البيانات (مع دعم الصور المتعددة)
 // ==========================================
 const allProducts = [
     {
         id: 1,
         name: "بدلة رسمية سوداء",
         price: 150000,
-        image: "images/suit.jpg",
+        image: "images/suit.jpg", // الصورة الرئيسية (للواجهة والسلة)
         description: "بدلة رسمية فاخرة.",
-        // إضافة الخيارات (اترك المصفوفة فارغة [] إذا المنتج ما بيه خيارات)
-        sizes: ["46", "48", "50", "52", "54"], 
-        colors: ["أسود", "كحلي"] 
+        sizes: ["48", "50", "52"], 
+        colors: ["أسود"],
+        // 🆕 صور إضافية (اختياري)
+        gallery: ["images/suit.jpg", "images/suit_back.jpg", "images/suit_fabric.jpg"]
     },
     {
         id: 2,
@@ -23,31 +24,35 @@ const allProducts = [
         price: 35000,
         image: "images/shirt.jpg",
         description: "قميص قطني 100%.",
-        sizes: ["S", "M", "L", "XL", "XXL"],
-        colors: [] // لا توجد خيارات ألوان (فقط أبيض)
+        sizes: ["M", "L", "XL"],
+        colors: [],
+        gallery: ["images/shirt.jpg","images/shirt2.jpg"] // لا توجد صور إضافية
     },
     {
         id: 3,
         name: "حذاء جلد طبيعي",
-        price: 60000,
+        price: 25000,
         image: "images/shoes.jpg",
-        description: "حذاء جلد طبيعي مريح.",
-        sizes: ["40", "41", "42", "43", "44", "45"],
-        colors: ["أسود", "بني"]
+        description: "حذاء جلد طبيعي.",
+        sizes: ["40", "41", "42"],
+        colors: ["أسود", "بني"],
+        gallery: ["images/shoes.jpg", "images/shoes2.jpg"]
     },
     {
-        id: 4, // منتج جديد للتجربة
+        id: 4,
         name: "سويتر شتوي",
         price: 25000,
-        image: "images/sweater.jpg", // تأكد من وجود صورة
-        description: "سويتر صوف دافئ بألوان متعددة.",
+        image: "images/sweater.jpg",
+        description: "سويتر صوف دافئ.",
         sizes: ["M", "L", "XL"],
-        colors: ["رمادي", "أحمر", "أصفر", "بيج"]
+        colors: ["رمادي", "أحمر", "أصفر"],
+        // مثال: 3 صور لنفس السويتر
+        gallery: ["images/sweater.jpg", "images/sweater_red.jpg", "images/sweater_yellow.jpg"]
     }
 ];
 
 // ==========================================
-// 🛒 2. نظام السلة الذكي (يدعم الخيارات)
+// 🛒 2. نظام السلة (كما هو)
 // ==========================================
 let cart = JSON.parse(localStorage.getItem('myCart')) || [];
 updateCartIcon();
@@ -57,40 +62,25 @@ function updateCartIcon() {
     if (countEl) countEl.textContent = cart.reduce((total, item) => total + item.qty, 0);
 }
 
-// دالة الإضافة للسلة (المطورة)
 function addToCart(productId, selectedSize = null, selectedColor = null) {
     const product = allProducts.find(p => p.id === productId);
     
-    // التحقق: هل المنتج يحتاج خيارات والزبون لم يختر؟
-    // (هذا يحدث فقط داخل صفحة المنتج)
     if (window.location.pathname.includes('product.html')) {
         const hasSizes = product.sizes && product.sizes.length > 0;
         const hasColors = product.colors && product.colors.length > 0;
-
         if (hasSizes && !selectedSize) return alert('يرجى اختيار القياس أولاً!');
         if (hasColors && !selectedColor) return alert('يرجى اختيار اللون أولاً!');
     }
 
-    // تجهيز قيم افتراضية إذا تم الإضافة من الصفحة الرئيسية
     const finalSize = selectedSize || (product.sizes && product.sizes.length > 0 ? "غير محدد" : "");
     const finalColor = selectedColor || (product.colors && product.colors.length > 0 ? "غير محدد" : "");
 
-    // البحث في السلة: يجب تطابق الآيدي + اللون + القياس
-    const existingItem = cart.find(item => 
-        item.id === productId && 
-        item.size === finalSize && 
-        item.color === finalColor
-    );
+    const existingItem = cart.find(item => item.id === productId && item.size === finalSize && item.color === finalColor);
 
     if (existingItem) {
         existingItem.qty++;
     } else {
-        cart.push({
-            ...product,
-            qty: 1,
-            size: finalSize,
-            color: finalColor
-        });
+        cart.push({ ...product, qty: 1, size: finalSize, color: finalColor });
     }
     
     localStorage.setItem('myCart', JSON.stringify(cart));
@@ -108,7 +98,7 @@ if (window.location.pathname.includes('index.html') || window.location.pathname.
     if (grid) {
         grid.innerHTML = allProducts.map(p => `
             <div class="product-card">
-                <img src="${p.image}" onerror="this.src='https://via.placeholder.com/300'" onclick="goToProduct(${p.id})" style="cursor:pointer" alt="${p.name}">
+                <img src="${p.image}" onerror="this.src='https://via.placeholder.com/300'" onclick="goToProduct(${p.id})" style="cursor:pointer">
                 <h3>${p.name}</h3>
                 <p class="price">${p.price.toLocaleString()} د.ع</p>
                 <button onclick="goToProduct(${p.id})">عرض التفاصيل</button>
@@ -116,29 +106,58 @@ if (window.location.pathname.includes('index.html') || window.location.pathname.
         `).join('');
     }
 }
-// ملاحظة: غيرت زر الصفحة الرئيسية ليذهب للتفاصيل بدلاً من الإضافة المباشرة لمنع المشاكل
 
 function goToProduct(id) {
     window.location.href = `product.html?id=${id}`;
 }
 
-// --- صفحة تفاصيل المنتج (product.html) ---
+// --- صفحة تفاصيل المنتج (المحدثة للصور) ---
 if (window.location.pathname.includes('product.html')) {
     const params = new URLSearchParams(window.location.search);
     const id = parseInt(params.get('id'));
     const product = allProducts.find(p => p.id === id);
 
     if (product) {
-        document.getElementById('p-img').src = product.image;
+        // تعيين الصورة الرئيسية الأولية
+        const mainImg = document.getElementById('p-img');
+        mainImg.src = product.image;
+        
         document.getElementById('p-name').textContent = product.name;
         document.getElementById('p-price').textContent = product.price.toLocaleString() + ' د.ع';
         document.getElementById('p-desc').textContent = product.description;
 
-        // 🟢 رسم قوائم الاختيار (الجديد)
-        const optionsContainer = document.getElementById('options-container');
-        optionsContainer.innerHTML = ''; // تنظيف
+        // 🟢 كود المعرض (Gallery Logic) 🟢
+        const thumbsContainer = document.getElementById('thumbnails-container');
+        thumbsContainer.innerHTML = ''; // تنظيف
 
-        // قائمة القياسات
+        if (product.gallery && product.gallery.length > 0) {
+            product.gallery.forEach(imgSrc => {
+                // إنشاء صورة مصغرة
+                const thumb = document.createElement('img');
+                thumb.src = imgSrc;
+                thumb.style.width = "60px";
+                thumb.style.height = "60px";
+                thumb.style.objectFit = "cover";
+                thumb.style.border = "2px solid #ddd";
+                thumb.style.borderRadius = "5px";
+                thumb.style.cursor = "pointer";
+                
+                // عند الضغط عليها، تتغير الصورة الكبيرة
+                thumb.onclick = function() {
+                    mainImg.src = imgSrc;
+                    // تلوين الإطار ليعرف المستخدم أي صورة اختار
+                    document.querySelectorAll('#thumbnails-container img').forEach(img => img.style.borderColor = '#ddd');
+                    thumb.style.borderColor = '#1abc9c';
+                };
+
+                thumbsContainer.appendChild(thumb);
+            });
+        }
+
+        // --- باقي الكود (الخيارات والأزرار) ---
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = ''; 
+
         if (product.sizes && product.sizes.length > 0) {
             optionsContainer.innerHTML += `
                 <div style="margin-bottom: 15px;">
@@ -151,7 +170,6 @@ if (window.location.pathname.includes('product.html')) {
             `;
         }
 
-        // قائمة الألوان
         if (product.colors && product.colors.length > 0) {
             optionsContainer.innerHTML += `
                 <div style="margin-bottom: 15px;">
@@ -164,20 +182,17 @@ if (window.location.pathname.includes('product.html')) {
             `;
         }
 
-        // زر الإضافة (يقرأ القيم من القوائم)
         document.getElementById('add-btn').onclick = () => {
             const sizeSelect = document.getElementById('size-select');
             const colorSelect = document.getElementById('color-select');
-            
             const selectedSize = sizeSelect ? sizeSelect.value : "";
             const selectedColor = colorSelect ? colorSelect.value : "";
-
             addToCart(product.id, selectedSize, selectedColor);
         };
     }
 }
 
-// --- صفحة السلة (cart.html) ---
+// --- صفحة السلة ---
 if (window.location.pathname.includes('cart.html')) {
     renderCartPage();
 }
@@ -186,28 +201,21 @@ function renderCartPage() {
     const container = document.getElementById('cart-items-container');
     const totalEl = document.getElementById('final-total');
     if (!container) return;
-
     if (cart.length === 0) {
         container.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:30px;">السلة فارغة 🛒</td></tr>';
         totalEl.textContent = '0';
         return;
     }
-
     let total = 0;
     container.innerHTML = cart.map((item, index) => {
         total += item.price * item.qty;
-        // عرض التفاصيل (لون وقياس)
         let details = "";
         if (item.size) details += ` | قياس: ${item.size}`;
         if (item.color) details += ` | لون: ${item.color}`;
-
         return `
             <tr>
                 <td><img src="${item.image}" width="50" style="border-radius:5px;"></td>
-                <td>
-                    ${item.name}
-                    <br><span style="font-size:0.8em; color:gray;">${details}</span>
-                </td>
+                <td>${item.name}<br><span style="font-size:0.8em; color:gray;">${details}</span></td>
                 <td>${item.price.toLocaleString()}</td>
                 <td>
                     <div style="display:flex; justify-content:center; gap:5px;">
@@ -220,12 +228,10 @@ function renderCartPage() {
             </tr>
         `;
     }).join('');
-
     const discount = localStorage.getItem('discount') || 0;
     totalEl.textContent = (total - (total * discount)).toLocaleString();
 }
 
-// دوال مساعدة للسلة
 function changeQty(index, delta) {
     cart[index].qty += delta;
     if (cart[index].qty < 1) cart[index].qty = 1;
@@ -233,14 +239,12 @@ function changeQty(index, delta) {
     renderCartPage();
     updateCartIcon();
 }
-
 function removeItem(index) {
     cart.splice(index, 1);
     localStorage.setItem('myCart', JSON.stringify(cart));
     renderCartPage();
     updateCartIcon();
 }
-
 function checkoutWhatsApp() {
     if (cart.length === 0) return alert('السلة فارغة!');
     let msg = "مرحباً، أريد إتمام الطلب:%0a";
@@ -249,7 +253,6 @@ function checkoutWhatsApp() {
         let details = "";
         if (item.size) details += ` (قياس: ${item.size})`;
         if (item.color) details += ` (لون: ${item.color})`;
-        
         msg += `- ${item.name} ${details} - عدد ${item.qty}%0a`;
         total += item.price * item.qty;
     });
@@ -257,16 +260,14 @@ function checkoutWhatsApp() {
     window.open(`https://wa.me/${MY_PHONE_NUMBER}?text=${msg}`, '_blank');
 }
 
-// 4. تسجيل الدخول (نفس الكود السابق)
+// تسجيل الدخول
 document.addEventListener('DOMContentLoaded', () => {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
     const userName = localStorage.getItem('userName');
     const guestLinks = document.getElementById('guest-links');
     const userLinks = document.getElementById('user-links');
     const userNameDisplay = document.getElementById('user-name-display');
-
     if (!guestLinks || !userLinks) return;
-
     if (isLoggedIn === 'true' && userName) {
         guestLinks.style.display = 'none';
         userLinks.style.display = 'flex';
@@ -277,4 +278,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 function logoutUser() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
-
