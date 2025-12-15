@@ -49,6 +49,14 @@ const allProducts = [
         // مثال: 3 صور لنفس السويتر
         gallery: ["images/sweater.jpg", "images/sweater_red.jpg", "images/sweater_yellow.jpg"]
     }
+    id: 5,
+        name: "Fبنطلون",
+        price: 20000,
+        image: "images/بنطلون.jpg",
+        description: "بنطلون قماش رسمي.",
+        sizes: ["30","31", "32", "33","34"],
+        colors: ["اسود"],
+        gallery: ["images/بنطلون.jpg"]
 ];
 
 // ==========================================
@@ -278,3 +286,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 function logoutUser() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
+
