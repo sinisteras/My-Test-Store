@@ -3,58 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر تجريبي للملابس</title>
+    <title>Urban Gent - للأناقة الرجالية</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-   <header>
-        <h1>متجر الأناقة</h1>
+    <header>
+        <div class="brand">
+            <h1>Urban Gent</h1>
+        </div>
+
         <nav>
             <ul>
-                <li><a href="#">الرئيسية</a></li>
-                <li><a href="#">ملابس الرجال</a></li>
-                <li><a href="#">ملابس النساء</a></li>
-                <li><a href="#">اتصل بنا</a></li>
+                <li><a href="index.html">الرئيسية</a></li>
+                <li><a href="#">الرسميات</a></li>
+                <li><a href="#">الكاجوال</a></li>
+                <li><a href="login.html">تسجيل الدخول</a></li>
             </ul>
         </nav>
         
-        <div id="cart-container">
+        <div id="cart-container" title="إكمال الطلب">
             🛒 <span id="cart-count">0</span>
         </div>
     </header>
 
     <main>
-        <h2>أحدث المنتجات</h2>
+        <h2>تـشكيلة الموسم للرجال</h2>
         
         <div class="product-card">
-            <img src="images/qamees.jpg" alt="قميص قطني فاخر">
-            
-            <h3>قميص قطني فاخر</h3>
-            <p class="price">150 ر.س</p>
+            <img src="images/suit.jpg" onerror="this.src='https://via.placeholder.com/300x400?text=بدلة+رسمية'" alt="بدلة رسمية">
+            <h3>بدلة رسمية سوداء</h3>
+            <p class="price">150,000 د.ع</p>
             <button>أضف للسلة</button>
         </div>
         
         <div class="product-card">
-            <img src="https://picsum.photos/id/240/300/400" alt="فستان سهرة أنيق">
-            
-            <h3>فستان سهرة أنيق</h3>
-            <p class="price">350 ر.س</p>
+            <img src="images/shirt.jpg" onerror="this.src='https://via.placeholder.com/300x400?text=قميص+أبيض'" alt="قميص كلاسيك">
+            <h3>قميص أبيض كلاسيك</h3>
+            <p class="price">35,000 د.ع</p>
+            <button>أضف للسلة</button>
+        </div>
+
+        <div class="product-card">
+            <img src="images/shoes.jpg" onerror="this.src='https://via.placeholder.com/300x400?text=حذاء+جلد'" alt="حذاء جلد">
+            <h3>حذاء جلد طبيعي</h3>
+            <p class="price">60,000 د.ع</p>
             <button>أضف للسلة</button>
         </div>
         
         </main>
 
     <footer>
-        <p>&copy; 2025 متجر تجريبي. جميع الحقوق محفوظة.</p>
-    </footer>
-<footer>
-        <p>&copy; 2025 متجر تجريبي. جميع الحقوق محفوظة.</p>
+        <p>&copy; 2025 Urban Gent. جميع الحقوق محفوظة.</p>
     </footer>
 
     <script src="script.js"></script>
-
-</body>
-</html>
 </body>
 </html>

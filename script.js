@@ -29,3 +29,65 @@ addButtons.forEach(button => {
         alert('تم إضافة المنتج إلى السلة! العدد الإجمالي: ' + cartCount);
     });
 });
+// 1. إعداد المتغيرات
+let cartCount = localStorage.getItem('totalCartItems') ? parseInt(localStorage.getItem('totalCartItems')) : 0;
+const cartCountElement = document.getElementById('cart-count');
+const cartContainer = document.getElementById('cart-container'); // أيقونة السلة
+const addButtons = document.querySelectorAll('.product-card button');
+
+// 2. تحديث العداد عند فتح الصفحة
+updateCartCount();
+
+function updateCartCount() {
+    cartCountElement.textContent = cartCount;
+}
+
+// 3. برمجة أزرار "أضف للسلة"
+addButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        cartCount++;
+        updateCartCount();
+        localStorage.setItem('totalCartItems', cartCount);
+        
+        // تأثير بصري بسيط عند الإضافة
+        button.textContent = "تمت الإضافة ✓";
+        button.style.backgroundColor = "#28a745"; // لون أخضر
+        setTimeout(() => {
+            button.textContent = "أضف للسلة";
+            button.style.backgroundColor = "#007bff"; // رجوع للون الأزرق
+        }, 1000);
+    });
+});
+
+// 4. برمجة عملية "إتمام الطلب" عند الضغط على أيقونة السلة
+cartContainer.addEventListener('click', () => {
+    
+    // أ. التأكد أن السلة ليست فارغة
+    if (cartCount === 0) {
+        alert("السلة فارغة! اختر بعض منتجات Urban Gent أولاً.");
+        return;
+    }
+
+    // ب. طلب العنوان من الزبون
+    let customerAddress = prompt("لإكمال الطلب، يرجى كتابة عنوان التوصيل (المنطقة، أقرب نقطة دالة):");
+
+    // ج. إذا قام الزبون بكتابة العنوان وضغط موافق
+    if (customerAddress) {
+        // رقم الواتساب الخاص بك (استبدل الأصفار برقمك مع مفتاح العراق 964)
+        let phoneNumber = "9647724329890"; 
+        
+        // تجهيز نص الرسالة
+        let message = `مرحباً Urban Gent،\nأرغب بطلب عدد (${cartCount}) قطع.\n📍 عنوان التوصيل: ${customerAddress}`;
+        
+        // تحويل النص لرابط واتساب
+        let whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+        
+        // فتح الرابط في نافذة جديدة
+        window.open(whatsappUrl, '_blank');
+        
+        // تصفير السلة بعد الطلب (اختياري)
+        // cartCount = 0;
+        // updateCartCount();
+        // localStorage.setItem('totalCartItems', 0);
+    }
+});
