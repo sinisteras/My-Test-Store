@@ -15,11 +15,21 @@
         </div>
 
         <nav>
+          <nav>
             <ul>
                 <li><a href="index.html">الرئيسية</a></li>
-                <li><a href="signup.html">إنشاء حساب</a></li>
-                <li><a href="login.html" style="background: #764ba2; color: white; padding: 5px 10px; border-radius: 5px;">دخول</a></li>
+                
+                <span id="guest-links" style="display: flex; gap: 15px;">
+                    <li><a href="signup.html" class="login-btn" style="background-color: transparent; color: #bdc3c7 !important; border: 1px solid #bdc3c7;">إنشاء حساب</a></li>
+                    <li><a href="login.html" class="login-btn">دخول</a></li>
+                </span>
+
+                <span id="user-links" style="display: none; align-items: center; gap: 15px;">
+                    <li style="color: #1abc9c; font-weight: bold;">مرحباً، <span id="user-name-display"></span> 👋</li>
+                    <li><a href="#" onclick="logoutUser()" style="color: #e74c3c; font-size: 0.9em;">تسجيل خروج</a></li>
+                </span>
             </ul>
+        </nav>
         </nav>
         
         <div id="cart-container">

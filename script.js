@@ -91,3 +91,60 @@ cartContainer.addEventListener('click', () => {
         // localStorage.setItem('totalCartItems', 0);
     }
 });
+// --- الجزء الأول: السلة (موجود سابقاً) ---
+let cartCount = localStorage.getItem('totalCartItems') ? parseInt(localStorage.getItem('totalCartItems')) : 0;
+const cartCountElement = document.getElementById('cart-count');
+const addButtons = document.querySelectorAll('.product-card button');
+
+updateCartCount();
+
+function updateCartCount() {
+    if(cartCountElement) cartCountElement.textContent = cartCount;
+}
+
+addButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        cartCount++;
+        updateCartCount();
+        localStorage.setItem('totalCartItems', cartCount);
+        alert('تمت الإضافة للسلة!');
+    });
+});
+
+// --- الجزء الجديد: إدارة حالة تسجيل الدخول ---
+
+// 1. التحقق عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    checkLoginState();
+});
+
+function checkLoginState() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    const userName = localStorage.getItem('userName');
+    
+    const guestLinks = document.getElementById('guest-links');
+    const userLinks = document.getElementById('user-links');
+    const userNameDisplay = document.getElementById('user-name-display');
+
+    if (isLoggedIn === 'true' && userName) {
+        // المستخدم مسجل دخول
+        if(guestLinks) guestLinks.style.display = 'none'; // إخفاء أزرار الدخول
+        if(userLinks) userLinks.style.display = 'flex';   // إظهار اسم المستخدم
+        if(userNameDisplay) userNameDisplay.textContent = userName; // وضع الاسم
+    } else {
+        // المستخدم زائر
+        if(guestLinks) guestLinks.style.display = 'flex';
+        if(userLinks) userLinks.style.display = 'none';
+    }
+}
+
+// 2. دالة تسجيل الخروج (يتم استدعاؤها عند الضغط على زر "خروج")
+function logoutUser() {
+    // مسح حالة الدخول فقط (يمكنك مسح الاسم أيضاً إذا أردت)
+    localStorage.removeItem('isLoggedIn');
+    
+    alert('تم تسجيل الخروج بنجاح');
+    
+    // إعادة تحميل الصفحة لتطبيق التغييرات
+    window.location.reload();
+}
