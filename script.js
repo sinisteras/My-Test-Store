@@ -1,48 +1,88 @@
-// --- 1. كود السلة (Cart System) ---
-let cartCount = localStorage.getItem('totalCartItems') ? parseInt(localStorage.getItem('totalCartItems')) : 0;
-const cartCountElement = document.getElementById('cart-count');
-const addButtons = document.querySelectorAll('.product-card button');
+// --- إعدادات المتجر ---
+const MY_PHONE_NUMBER = "9647724329890"; // 🔴 ضع رقمك هنا بدلاً من الاصفار (مع مفتاح العراق 964)
 
-// تحديث العداد عند فتح الصفحة
-if(cartCountElement) cartCountElement.textContent = cartCount;
+// --- 1. نظام السلة الذكي ---
+// استرجاع السلة القديمة أو بدء سلة فارغة
+let cart = JSON.parse(localStorage.getItem('myCart')) || [];
 
-// تفعيل أزرار الإضافة
-addButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        cartCount++;
-        if(cartCountElement) cartCountElement.textContent = cartCount;
-        localStorage.setItem('totalCartItems', cartCount);
-        alert('تمت الإضافة للسلة! مجموع العناصر: ' + cartCount);
+updateCartUI();
+
+// دالة إضافة منتج (يتم استدعاؤها من زر HTML)
+function addToCart(productName, productPrice) {
+    // إضافة المنتج للقائمة
+    cart.push({ name: productName, price: productPrice });
+    
+    // حفظ السلة في الذاكرة
+    localStorage.setItem('myCart', JSON.stringify(cart));
+    
+    // تحديث الشكل
+    updateCartUI();
+    
+    alert(`تمت إضافة "${productName}" للسلة بنجاح!`);
+}
+
+// تحديث عداد السلة
+function updateCartUI() {
+    const cartCountElement = document.getElementById('cart-count');
+    if (cartCountElement) {
+        cartCountElement.textContent = cart.length;
+    }
+}
+
+// --- 2. نظام الحجز والشراء (Checkout) ---
+function checkout() {
+    if (cart.length === 0) {
+        alert("السلة فارغة! أضف منتجات أولاً.");
+        return;
+    }
+
+    // حساب المجموع وتجهيز الفاتورة
+    let total = 0;
+    let message = "مرحباً، أريد تقديم طلب جديد:%0a"; // %0a تعني سطر جديد
+
+    cart.forEach((item, index) => {
+        total += item.price;
+        message += `${index + 1}- ${item.name} (${item.price.toLocaleString()} د.ع)%0a`;
     });
-});
 
-// --- 2. كود تسجيل الدخول (Login System) ---
+    message += `%0a💰 *المجموع الكلي: ${total.toLocaleString()} د.ع*`;
+    message += "%0a%0aيرجى تأكيد الحجز.";
+
+    // التأكد من المستخدم قبل الإرسال
+    let confirmBuy = confirm(`سلة المشتريات تحتوي على ${cart.length} منتجات.\nالمجموع: ${total.toLocaleString()} د.ع\n\nهل تريد إرسال الطلب عبر واتساب؟`);
+
+    if (confirmBuy) {
+        // فتح واتساب وإرسال الرسالة
+        window.open(`https://wa.me/${MY_PHONE_NUMBER}?text=${message}`, '_blank');
+        
+        // (اختياري) تفريغ السلة بعد الطلب
+        // cart = [];
+        // localStorage.setItem('myCart', JSON.stringify(cart));
+        // updateCartUI();
+    }
+}
+
+// --- 3. نظام تسجيل الدخول (كما هو سابقاً) ---
 window.addEventListener('load', function() {
-    // التأكد من تحميل الصفحة بالكامل قبل البحث عن العناصر
     const isLoggedIn = localStorage.getItem('isLoggedIn');
     const userName = localStorage.getItem('userName');
-
     const guestLinks = document.getElementById('guest-links');
     const userLinks = document.getElementById('user-links');
     const userNameDisplay = document.getElementById('user-name-display');
 
-    // إذا لم يجد العناصر في الصفحة، يتوقف عن العمل لمنع الأخطاء
     if (!guestLinks || !userLinks) return;
 
     if (isLoggedIn === 'true' && userName) {
-        // حالة: المستخدم مسجل دخول
-        guestLinks.style.display = 'none';      // إخفاء أزرار الدخول
-        userLinks.style.display = 'flex';       // إظهار اسم المستخدم وزر الخروج
-        if(userNameDisplay) userNameDisplay.textContent = userName; // وضع الاسم
+        guestLinks.style.display = 'none';
+        userLinks.style.display = 'flex';
+        if(userNameDisplay) userNameDisplay.textContent = userName;
     } else {
-        // حالة: زائر جديد
-        guestLinks.style.display = 'flex';      // إظهار أزرار الدخول
-        userLinks.style.display = 'none';       // إخفاء قسم المستخدم
+        guestLinks.style.display = 'flex';
+        userLinks.style.display = 'none';
     }
 });
 
-// دالة تسجيل الخروج
 function logoutUser() {
     localStorage.removeItem('isLoggedIn');
-    window.location.reload(); // إعادة تحميل الصفحة لتطبيق التغييرات
+    window.location.reload();
 }
