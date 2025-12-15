@@ -3,28 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سلة المشتريات</title>
+    <title>سلة المشتريات - Urban Gent</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: white; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         th, td { padding: 15px; border-bottom: 1px solid #ddd; text-align: center; }
-        th { background: #f8f9fa; }
-        .cart-summary { background: white; padding: 20px; border-radius: 10px; text-align: left; width: 300px; margin-right: auto; }
+        th { background: #2c3e50; color: white; }
+        .cart-summary { background: white; padding: 20px; border-radius: 10px; text-align: left; width: 300px; margin-right: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        
+        @media (max-width: 600px) {
+            table { font-size: 0.8em; }
+            th, td { padding: 8px; }
+            .cart-summary { width: 100%; margin-top: 20px; }
+        }
     </style>
 </head>
 <body>
+
     <header>
-        <h1>Urban Gent</h1>
+        <div class="brand">
+            <img src="images/logo.png" onerror="this.style.display='none'" alt="شعار المتجر" width="50"> 
+            <h1>Urban Gent</h1>
+        </div>
+
         <nav>
             <ul>
                 <li><a href="index.html">الرئيسية</a></li>
+                
+                <span id="guest-links" style="display: flex; gap: 15px;">
+                    <li><a href="signup.html" class="login-btn">حساب جديد</a></li>
+                    <li><a href="login.html" class="login-btn">دخول</a></li>
+                </span>
+
+                <span id="user-links" style="display: none; align-items: center; gap: 15px;">
+                    <li style="color: #1abc9c; font-weight: bold;">أهلاً <span id="user-name-display"></span></li>
+                    <li><a href="#" onclick="logoutUser()" style="color: red; cursor: pointer;">خروج</a></li>
+                </span>
             </ul>
         </nav>
+        
+        <div id="cart-container">
+            <a href="cart.html" style="text-decoration: none; color: white;">
+                🛒 <span id="cart-count">0</span>
+            </a>
+        </div>
     </header>
 
-    <main>
-        <h2>سلة المشتريات</h2>
+    <main style="padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
+        <h2 style="color: #2c3e50; border-bottom: 3px solid #1abc9c; display: inline-block; padding-bottom: 10px; margin-bottom: 30px;">سلة المشتريات</h2>
         
         <table>
             <thead>
@@ -40,25 +67,54 @@
                 </tbody>
         </table>
 
-        <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+        <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
             
-            <div style="background: white; padding: 20px; border-radius: 10px; height: fit-content;">
-                <h3>كود الخصم</h3>
-                <input type="text" id="coupon-code" placeholder="أدخل الكود هنا" style="padding: 10px;">
-                <button onclick="applyCoupon()" style="padding: 10px; background: #2c3e50; color: white; border: none;">تطبيق</button>
-                <p style="font-size: 0.8em; color: gray;">جرب كود: IQ2025</p>
+            <div style="background: white; padding: 20px; border-radius: 10px; height: fit-content; flex: 1; min-width: 250px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+                <h3>هل لديك كود خصم؟</h3>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="coupon-code" placeholder="أدخل الكود هنا" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; flex: 1;">
+                    <button onclick="applyCoupon()" style="padding: 10px 20px; background: #2c3e50; color: white; border: none; border-radius: 5px; cursor: pointer;">تطبيق</button>
+                </div>
+                <p style="font-size: 0.8em; color: gray; margin-top: 10px;">(جرب كود: IQ2025)</p>
             </div>
 
             <div class="cart-summary">
                 <h3>ملخص الطلب</h3>
-                <p>المجموع الكلي: <strong id="final-total" style="font-size: 1.4em; color: #1abc9c;">0</strong> د.ع</p>
-                <button onclick="checkoutWhatsApp()" style="width: 100%; padding: 15px; background: #25D366; color: white; border: none; font-weight: bold; font-size: 1.1em; cursor: pointer;">
+                <hr style="border: 1px solid #eee; margin: 10px 0;">
+                <p style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>المجموع الكلي:</span>
+                    <strong id="final-total" style="font-size: 1.4em; color: #1abc9c;">0</strong> <span style="font-weight: bold;">د.ع</span>
+                </p>
+                <button onclick="checkoutWhatsApp()" style="width: 100%; padding: 15px; background: #25D366; color: white; border: none; font-weight: bold; font-size: 1.1em; cursor: pointer; border-radius: 5px; margin-top: 15px; transition: background 0.3s;">
                     إتمام الطلب عبر واتساب 📱
                 </button>
             </div>
 
         </div>
     </main>
+
+    <footer style="background: #2c3e50; color: white; padding: 40px 20px; margin-top: 50px;">
+        <div style="display: flex; justify-content: space-around; flex-wrap: wrap; text-align: right;">
+            <div>
+                <h3>Urban Gent</h3>
+                <p>وجهتك الأولى للأناقة الرجالية.</p>
+            </div>
+            <div>
+                <h3>روابط سريعة</h3>
+                <ul style="line-height: 2;">
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="cart.html" style="color: #1abc9c;">سلة المشتريات</a></li>
+                    <li><a href="about.html">من نحن</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>تواصل معنا</h3>
+                <p>📞 07724329890</p>
+                <p>📍 بغداد، العراق</p>
+            </div>
+        </div>
+        <p style="text-align: center; margin-top: 30px; border-top: 1px solid #555; padding-top: 20px;">&copy; 2025 Urban Gent. جميع الحقوق محفوظة.</p>
+    </footer>
 
     <script src="script.js"></script>
 </body>
