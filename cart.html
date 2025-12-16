@@ -43,11 +43,14 @@
             </ul>
         </nav>
         
-        <div id="cart-container">
-            <a href="cart.html" style="text-decoration: none; color: white;">
-                🛒 <span id="cart-count">0</span>
-            </a>
-        </div>
+  <div id="guest-links">
+    <a href="login.html">تسجيل الدخول</a>
+</div>
+
+<div id="user-links" style="display: none;">
+    <span id="user-name-display"></span>
+    <button onclick="logoutUser()">تسجيل الخروج</button>
+</div>
     </header>
 
    <main style="padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
@@ -120,6 +123,7 @@
         <p style="text-align: center; margin-top: 30px; border-top: 1px solid #555; padding-top: 20px;">&copy; 2025 Urban Gent. جميع الحقوق محفوظة.</p>
     </footer>
 
-    <script src="script.js"></script>
+   <script type="module" src="script.js"></script>
 </body>
 </html>
+
