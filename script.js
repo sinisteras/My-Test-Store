@@ -257,4 +257,22 @@ function logoutUser() {
     window.location.href = 'index.html';
 }
 
+// دالة استعادة كلمة المرور
+function recoverPassword() {
+    const phoneInput = document.getElementById('recover-phone');
+    if (!phoneInput) return;
+
+    const phone = phoneInput.value.trim();
+    let users = JSON.parse(localStorage.getItem('registered_users')) || [];
+    
+    const user = users.find(u => u.phone === phone);
+
+    if (user) {
+        // تنبيه يظهر كلمة السر المخزنة في متصفحه
+        alert(`تم العثور على حسابك بنجاح! ✅\nكلمة المرور الخاصة بك هي: ${user.password}`);
+        window.location.href = 'login.html';
+    } else {
+        alert("عذراً، هذا الرقم غير مسجل على هذا الجهاز ❌");
+    }
+}
 
