@@ -289,3 +289,6 @@ function applyCoupon() {
     }
 }
 
+window.removeItem = removeItem;
+window.changeQty = changeQty;
+window.applyCoupon = applyCoupon;
