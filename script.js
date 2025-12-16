@@ -345,6 +345,7 @@ function updateCartButtons() {
 
 // --- إتمام الطلب ---
 // أضف async قبل كلمة function
+// --- إتمام الطلب ---
 async function checkoutWhatsApp() {
     const user = localStorage.getItem('userName');
     if (!user) return alert("يرجى تسجيل الدخول أولاً 🔐");
@@ -352,7 +353,7 @@ async function checkoutWhatsApp() {
 
     const finalTotal = document.getElementById('final-total').textContent;
 
-    // --- (الخطوة الثالثة: حفظ الطلب في السحابة) ---
+    // تجهيز بيانات الطلب للسجل والسحابة
     const orderData = {
         customerName: user,
         date: new Date().toLocaleString('ar-EG'),
@@ -362,16 +363,20 @@ async function checkoutWhatsApp() {
     };
 
     try {
-        // هنا نقوم بحفظ الطلب في Firebase قبل فتح الواتساب
+        // 1. حفظ في Firebase
         await addDoc(collection(db, "orders"), orderData);
-        console.log("تم تسجيل الطلب في السحابة بنجاح ✅");
+        
+        // 2. حفظ في سجل الطلبات المحلي (لكي يظهر في صفحة البروفايل فوراً)
+        let history = JSON.parse(localStorage.getItem('orderHistory')) || [];
+        history.push(orderData);
+        localStorage.setItem('orderHistory', JSON.stringify(history));
+        
+        console.log("تم تسجيل الطلب في السحابة والسجل المحلي ✅");
     } catch (error) {
         console.error("فشل الحفظ في السحابة: ", error);
-        // حتى لو فشل الحفظ في السحابة، سنسمح بفتح الواتساب لكي لا يضيع الطلب
     }
-    // ------------------------------------------
 
-    // بقية كود الواتساب الخاص بك...
+    // 3. إعداد رسالة الواتساب
     let msg = `🛍️ *طلب جديد من Urban Gent*%0a`;
     msg += `👤 *الزبون:* ${user}%0a`;
     msg += `--------------------------%0a`;
@@ -380,12 +385,17 @@ async function checkoutWhatsApp() {
     });
     msg += `%0a💰 *الإجمالي: ${finalTotal} د.ع*`;
 
-    // تفريغ السلة وتوجيه المستخدم
+    // 4. تنظيف السلة
     localStorage.removeItem('myCart');
     cart = [];
     updateCartIcon();
 
+    // 5. فتح واتساب وتوجيه المستخدم للبروفايل
     window.open(`https://wa.me/${MY_PHONE_NUMBER}?text=${msg}`, '_blank');
+    
+    setTimeout(() => {
+        window.location.href = 'profile.html';
+    }, 1500);
 }
     // توجيه الزبون لصفحة ملفه الشخصي لرؤية الطلب في السجل
     setTimeout(() => {
@@ -440,6 +450,7 @@ function applyCoupon() {
         renderCartPage();
     }
 }
+
 
 
 
