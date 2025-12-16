@@ -50,47 +50,52 @@
         </div>
     </header>
 
-    <main style="padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
-        <h2 style="color: #2c3e50; border-bottom: 3px solid #1abc9c; display: inline-block; padding-bottom: 10px; margin-bottom: 30px;">سلة المشتريات</h2>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>الصورة</th>
-                    <th>المنتج</th>
-                    <th>السعر</th>
-                    <th>الكمية</th>
-                    <th>حذف</th>
-                </tr>
-            </thead>
-            <tbody id="cart-items-container">
-                </tbody>
-        </table>
+   <main style="padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
+    <h2 style="color: #2c3e50; border-bottom: 3px solid #1abc9c; display: inline-block; padding-bottom: 10px; margin-bottom: 30px;">سلة المشتريات</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>الصورة</th>
+                <th>المنتج</th>
+                <th>السعر</th>
+                <th>الكمية</th>
+                <th>حذف</th>
+            </tr>
+        </thead>
+        <tbody id="cart-items-container">
+            </tbody>
+    </table>
 
-        <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
-            
-            <div style="background: white; padding: 20px; border-radius: 10px; height: fit-content; flex: 1; min-width: 250px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
-                <h3>هل لديك كود خصم؟</h3>
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="coupon-code" placeholder="أدخل الكود هنا" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; flex: 1;">
-                    <button onclick="applyCoupon()" style="padding: 10px 20px; background: #2c3e50; color: white; border: none; border-radius: 5px; cursor: pointer;">تطبيق</button>
-                </div>
-                <p style="font-size: 0.8em; color: gray; margin-top: 10px;">(جرب كود: IQ2025)</p>
+    <div style="display: flex; justify-content: flex-end; gap: 20px; flex-wrap: wrap;">
+        <div class="cart-summary" style="width: 100%; max-width: 400px; margin-right: 0;">
+            <h3>ملخص الطلب</h3>
+            <hr style="border: 1px solid #eee; margin: 10px 0;">
+
+            <label style="font-size: 0.9em; color: #666;">هل لديك كود خصم؟</label>
+            <div style="margin: 10px 0; display: flex; gap: 5px;">
+                <input type="text" id="coupon-code" placeholder="جرب IQ2025" 
+                       style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <button onclick="applyCoupon()" 
+                        style="padding: 10px 15px; background: #2c3e50; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                    تطبيق
+                </button>
             </div>
 
-            <div class="cart-summary">
-                <h3>ملخص الطلب</h3>
-                <hr style="border: 1px solid #eee; margin: 10px 0;">
-                <p style="display: flex; justify-content: space-between; align-items: center;">
-                    <span>المجموع الكلي:</span>
-                    <strong id="final-total" style="font-size: 1.4em; color: #1abc9c;">0</strong> <span style="font-weight: bold;">د.ع</span>
-                </p>
-               <div id="checkout-action-area">
-    </div>
-            </div>
+            <p id="discount-info" style="color: #27ae60; font-weight: bold; font-size: 0.9em; margin-bottom: 10px; min-height: 1.2em;"></p>
 
+            <p style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 15px;">
+                <span>المجموع النهائي:</span>
+                <span>
+                    <strong id="final-total" style="font-size: 1.6em; color: #1abc9c;">0</strong> 
+                    <span style="font-weight: bold;"> د.ع</span>
+                </span>
+            </p>
+
+            <div id="checkout-action-area"></div> 
         </div>
-    </main>
+    </div>
+</main>
 
     <footer style="background: #2c3e50; color: white; padding: 40px 20px; margin-top: 50px;">
         <div style="display: flex; justify-content: space-around; flex-wrap: wrap; text-align: right;">
