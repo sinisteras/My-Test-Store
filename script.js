@@ -47,16 +47,23 @@ const allProducts = [
         colors: ["رمادي", "أحمر", "أصفر"],
         gallery: ["images/sweater.jpg", "images/sweater_red.jpg", "images/sweater_yellow.jpg"]
     },
-    {   // 🔴 تم التصحيح: أضفنا القوس هنا
+  {
         id: 5,
         name: "بنطلون رسمي",
         price: 20000,
         image: "images/pant.jpg",
-        description: "بنطلون قماش رسمي.",
-        sizes: ["30","31", "32", "33","34"],
+        description: "بنطلون قماش رسمي فاخر.",
+        // 🆕 نظام المخزون حسب القياس واللون
+        inventory: [
+            { size: "30", color: "اسود", stock: 4 },
+            { size: "32", color: "اسود", stock: 2 },
+            { size: "34", color: "اسود", stock: 0 } // نفد من المخزون
+        ],
+        // سنبقي هذه للمساعدة في بناء القوائم المنسدلة
+        sizes: ["30", "32", "34"],
         colors: ["اسود"],
         gallery: ["images/pant.jpg"]
-    }   // 🔴 وأغلقنا القوس هنا
+    }
 ];
 
 // ==========================================
@@ -127,36 +134,104 @@ if (window.location.pathname.includes('product.html')) {
 
     if (product) {
         // تعيين الصورة الرئيسية الأولية
+    // 1. عرض البيانات الأساسية
         const mainImg = document.getElementById('p-img');
         mainImg.src = product.image;
-        
         document.getElementById('p-name').textContent = product.name;
         document.getElementById('p-price').textContent = product.price.toLocaleString() + ' د.ع';
         document.getElementById('p-desc').textContent = product.description;
 
-        // 🟢 كود المعرض (Gallery Logic) 🟢
+        // 2. كود المعرض (Gallery Logic) - كما هو
         const thumbsContainer = document.getElementById('thumbnails-container');
-        thumbsContainer.innerHTML = ''; // تنظيف
-
+        thumbsContainer.innerHTML = ''; 
         if (product.gallery && product.gallery.length > 0) {
             product.gallery.forEach(imgSrc => {
-                // إنشاء صورة مصغرة
                 const thumb = document.createElement('img');
                 thumb.src = imgSrc;
+                thumb.className = "thumb-img"; // يمكنك إضافة ستايل لها في CSS
                 thumb.style.width = "60px";
                 thumb.style.height = "60px";
                 thumb.style.objectFit = "cover";
                 thumb.style.border = "2px solid #ddd";
                 thumb.style.borderRadius = "5px";
                 thumb.style.cursor = "pointer";
-                
-                // عند الضغط عليها، تتغير الصورة الكبيرة
                 thumb.onclick = function() {
                     mainImg.src = imgSrc;
-                    // تلوين الإطار ليعرف المستخدم أي صورة اختار
                     document.querySelectorAll('#thumbnails-container img').forEach(img => img.style.borderColor = '#ddd');
                     thumb.style.borderColor = '#1abc9c';
                 };
+                thumbsContainer.appendChild(thumb);
+            });
+        }
+
+        // 3. كود بناء القوائم المنسدلة (القياس واللون)
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = ''; 
+
+        if (product.sizes && product.sizes.length > 0) {
+            optionsContainer.innerHTML += `
+                <div style="margin-bottom: 10px;">
+                    <label>القياس:</label>
+                    <select id="size-select" style="padding:5px; border-radius:5px;">
+                        <option value="">اختر..</option>
+                        ${product.sizes.map(s => `<option value="${s}">${s}</option>`).join('')}
+                    </select>
+                </div>`;
+        }
+
+        if (product.colors && product.colors.length > 0) {
+            optionsContainer.innerHTML += `
+                <div style="margin-bottom: 10px;">
+                    <label>اللون:</label>
+                    <select id="color-select" style="padding:5px; border-radius:5px;">
+                        <option value="">اختر..</option>
+                        ${product.colors.map(c => `<option value="${c}">${c}</option>`).join('')}
+                    </select>
+                </div>`;
+        }
+
+        // 4. 🆕 إضافة مكان عرض المخزون (هنا الإضافة الجديدة)
+        optionsContainer.innerHTML += `
+            <div id="stock-display" style="margin-top: 15px; font-weight: bold; color: #e67e22;">
+                يرجى اختيار الخيارات المتاحة
+            </div>
+        `;
+
+        // 5. 🆕 دالة فحص المخزون وتحديث الزر
+        window.updateStockStatus = function() {
+            const s = document.getElementById('size-select')?.value;
+            const c = document.getElementById('color-select')?.value;
+            const display = document.getElementById('stock-display');
+            const btn = document.getElementById('add-btn');
+
+            if (product.inventory) {
+                const variant = product.inventory.find(v => v.size === s && v.color === c);
+                if (variant) {
+                    if (variant.stock > 0) {
+                        display.textContent = `متوفر: ${variant.stock} قطعة`;
+                        display.style.color = "#27ae60";
+                        btn.disabled = false;
+                        btn.style.opacity = "1";
+                    } else {
+                        display.textContent = `للأسف، هذا الخيار نفد ❌`;
+                        display.style.color = "#c0392b";
+                        btn.disabled = true;
+                        btn.style.opacity = "0.5";
+                    }
+                } else if (s && c) {
+                    display.textContent = "هذا التشكيل غير متوفر حالياً";
+                    display.style.color = "#c0392b";
+                    btn.disabled = true;
+                }
+            }
+        };
+
+        // ربط القوائم بالدالة عند التغيير
+        document.body.addEventListener('change', (e) => {
+            if (e.target.id === 'size-select' || e.target.id === 'color-select') {
+                updateStockStatus();
+            }
+        });
 
                 thumbsContainer.appendChild(thumb);
             });
@@ -320,5 +395,6 @@ function applyCoupon() {
         renderCartPage(); // إعادة السعر للأصل
     }
 }
+
 
 
