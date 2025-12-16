@@ -1,3 +1,18 @@
+// استيراد Firebase (ضع هذا في أعلى ملف script.js)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  authDomain: "urban-gent.firebaseapp.com",
+  projectId: "urban-gent",
+  storageBucket: "urban-gent.appspot.com",
+  messagingSenderId: "...",
+  appId: "..."
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 // ==========================================
 // ⚙️ إعدادات المتجر ورقم الواتساب
 // ==========================================
@@ -420,6 +435,7 @@ function applyCoupon() {
         renderCartPage();
     }
 }
+
 
 
 
