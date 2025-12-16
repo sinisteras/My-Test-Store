@@ -329,36 +329,56 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 function logoutUser() { localStorage.clear(); window.location.href = 'index.html'; }
-// دالة التسجيل باستخدام رقم الهاتف
+// ==========================================
+// 🔐 نظام الحسابات (بالهاتف)
+// ==========================================
+
+// --- دالة تسجيل الدخول ---
+function loginUser() {
+    const phone = document.getElementById('login-phone').value.trim();
+    const pass = document.getElementById('login-pass').value.trim();
+
+    // جلب قائمة المستخدمين من الذاكرة
+    let users = JSON.parse(localStorage.getItem('registered_users')) || [];
+
+    // البحث عن مستخدم يطابق الهاتف وكلمة المرور
+    const user = users.find(u => u.phone === phone && u.password === pass);
+
+    if (user) {
+        // حفظ حالة الجلسة
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userName', phone); // سيظهر الرقم في الهيدر
+        
+        alert("أهلاً بك مجدداً! تم تسجيل الدخول ✅");
+        window.location.href = 'index.html'; // التوجه للرئيسية
+    } else {
+        alert("خطأ: رقم الهاتف أو كلمة المرور غير صحيحة ❌");
+    }
+}
+
+// --- دالة إنشاء حساب جديد (توضع في صفحة signup.html) ---
 function registerUser() {
     const phone = document.getElementById('phone').value.trim();
     const pass = document.getElementById('password').value.trim();
 
-    if (phone.length < 10) {
-        alert("يرجى إدخال رقم هاتف صحيح");
+    if (phone.length < 10 || pass.length < 4) {
+        alert("يرجى إدخال رقم هاتف صحيح وكلمة مرور قوية");
         return;
     }
 
-    // 1. جلب قائمة المستخدمين المسجلين سابقاً أو إنشاء قائمة جديدة
     let users = JSON.parse(localStorage.getItem('registered_users')) || [];
 
-    // 2. التحقق هل الرقم موجود مسبقاً؟
+    // فحص هل الرقم مستخدم سابقاً
     const isExist = users.find(u => u.phone === phone);
 
     if (isExist) {
-        alert("هذا الرقم مستخدم بالفعل! يرجى تسجيل الدخول ❌");
-        window.location.href = 'login.html';
+        alert("هذا الرقم مسجل بالفعل! حاول تسجيل الدخول ❌");
     } else {
-        // 3. إضافة المستخدم الجديد
+        // إضافة المستخدم للقائمة
         users.push({ phone: phone, password: pass });
         localStorage.setItem('registered_users', JSON.stringify(users));
-
-        // تسجيل الدخول تلقائياً بعد التسجيل
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userName', phone); // سيظهر رقم الهاتف بدلاً من الاسم
-
-        alert("تم إنشاء الحساب بنجاح ✅");
-        window.location.href = 'index.html';
+        
+        alert("تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول ✅");
+        window.location.href = 'login.html';
     }
 }
-
