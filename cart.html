@@ -12,6 +12,22 @@
         th { background: #2c3e50; color: white; }
         .cart-summary { background: white; padding: 20px; border-radius: 10px; text-align: left; width: 300px; margin-right: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         
+        /* تصميم زر الشراء */
+        .buy-btn {
+            width: 100%;
+            padding: 15px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+        .buy-btn:hover { background: #2ecc71; }
+
         @media (max-width: 600px) {
             table { font-size: 0.8em; }
             th, td { padding: 8px; }
@@ -38,67 +54,58 @@
 
                 <span id="user-links" style="display: none; align-items: center; gap: 15px;">
                     <li style="color: #1abc9c; font-weight: bold;">أهلاً <span id="user-name-display"></span></li>
-                    <li><a href="#" onclick="logoutUser()" style="color: red; cursor: pointer;">خروج</a></li>
+                    <li><a href="#" onclick="logoutUser()" style="color: #e74c3c; cursor: pointer; font-weight: bold;">خروج</a></li>
                 </span>
             </ul>
         </nav>
-        
-  <div id="guest-links">
-    <a href="login.html">تسجيل الدخول</a>
-</div>
-
-<div id="user-links" style="display: none;">
-    <span id="user-name-display"></span>
-    <button onclick="logoutUser()">تسجيل الخروج</button>
-</div>
     </header>
 
-   <main style="padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
-    <h2 style="color: #2c3e50; border-bottom: 3px solid #1abc9c; display: inline-block; padding-bottom: 10px; margin-bottom: 30px;">سلة المشتريات</h2>
-    
-    <table>
-        <thead>
-            <tr>
-                <th>الصورة</th>
-                <th>المنتج</th>
-                <th>السعر</th>
-                <th>الكمية</th>
-                <th>حذف</th>
-            </tr>
-        </thead>
-        <tbody id="cart-items-container">
-            </tbody>
-    </table>
+    <main style="padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
+        <h2 style="color: #2c3e50; border-bottom: 3px solid #1abc9c; display: inline-block; padding-bottom: 10px; margin-bottom: 30px;">سلة المشتريات</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>الصورة</th>
+                    <th>المنتج</th>
+                    <th>السعر</th>
+                    <th>الكمية</th>
+                    <th>حذف</th>
+                </tr>
+            </thead>
+            <tbody id="cart-items-container">
+                </tbody>
+        </table>
 
-    <div style="display: flex; justify-content: flex-end; gap: 20px; flex-wrap: wrap;">
-        <div class="cart-summary" style="width: 100%; max-width: 400px; margin-right: 0;">
-            <h3>ملخص الطلب</h3>
-            <hr style="border: 1px solid #eee; margin: 10px 0;">
+        <div style="display: flex; justify-content: flex-end; gap: 20px; flex-wrap: wrap;">
+            <div class="cart-summary" style="width: 100%; max-width: 400px; margin-right: 0;">
+                <h3>ملخص الطلب</h3>
+                <hr style="border: 1px solid #eee; margin: 10px 0;">
 
-            <label style="font-size: 0.9em; color: #666;">هل لديك كود خصم؟</label>
-            <div style="margin: 10px 0; display: flex; gap: 5px;">
-                <input type="text" id="coupon-code" placeholder="جرب IQ2025" 
-                       style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                <button onclick="applyCoupon()" 
-                        style="padding: 10px 15px; background: #2c3e50; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
-                    تطبيق
-                </button>
+                <label style="font-size: 0.9em; color: #666;">هل لديك كود خصم؟</label>
+                <div style="margin: 10px 0; display: flex; gap: 5px;">
+                    <input type="text" id="coupon-code" placeholder="جرب IQ2025" 
+                           style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    <button onclick="applyCoupon()" 
+                            style="padding: 10px 15px; background: #2c3e50; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                        تطبيق
+                    </button>
+                </div>
+
+                <p id="discount-info" style="color: #27ae60; font-weight: bold; font-size: 0.9em; margin-bottom: 10px; min-height: 1.2em;"></p>
+
+                <p style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 15px;">
+                    <span>المجموع النهائي:</span>
+                    <span>
+                        <strong id="final-total" style="font-size: 1.6em; color: #1abc9c;">0</strong> 
+                        <span style="font-weight: bold;"> د.ع</span>
+                    </span>
+                </p>
+
+                <button class="buy-btn" onclick="checkoutWhatsApp()">إتمام الطلب عبر واتساب 🛍️</button>
             </div>
-
-            <p id="discount-info" style="color: #27ae60; font-weight: bold; font-size: 0.9em; margin-bottom: 10px; min-height: 1.2em;"></p>
-
-            <p style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 15px;">
-                <span>المجموع النهائي:</span>
-                <span>
-                    <strong id="final-total" style="font-size: 1.6em; color: #1abc9c;">0</strong> 
-                    <span style="font-weight: bold;"> د.ع</span>
-                </span>
-            </p>
-
-            <div id="checkout-action-area"></div> 
         </div>
-    </div>
-</main>
+    </main>
 
     <footer style="background: #2c3e50; color: white; padding: 40px 20px; margin-top: 50px;">
         <div style="display: flex; justify-content: space-around; flex-wrap: wrap; text-align: right;">
@@ -123,7 +130,6 @@
         <p style="text-align: center; margin-top: 30px; border-top: 1px solid #555; padding-top: 20px;">&copy; 2025 Urban Gent. جميع الحقوق محفوظة.</p>
     </footer>
 
-   <script type="module" src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
-
