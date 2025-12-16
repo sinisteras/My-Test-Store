@@ -99,34 +99,40 @@
     </div>
 
     <script src="script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const userPhone = localStorage.getItem('userName');
-            
-            // 1. حماية الصفحة
-            if (!userPhone) {
-                window.location.href = 'login.html';
-                return;
-            }
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 1. جلب البيانات من الذاكرة
+        const userName = localStorage.getItem('userName');
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
-            // 2. عرض البيانات الأساسية
-            document.getElementById('display-phone').textContent = userPhone;
-            document.getElementById('welcome-msg').textContent = "أهلاً بك يا " + userPhone;
+        // 2. حماية الصفحة: إذا لم يسجل دخول، ارجعه لصفحة الدخول
+        if (!isLoggedIn || !userName) {
+            window.location.href = 'login.html';
+            return;
+        }
 
-            // 3. جلب وعرض سجل الطلبات من الـ LocalStorage
-            const ordersList = document.getElementById('orders-list');
-            const history = JSON.parse(localStorage.getItem('orderHistory')) || [];
+        // 3. عرض البيانات في الواجهة
+        document.getElementById('display-phone').textContent = userName;
+        document.getElementById('welcome-msg').textContent = "أهلاً بك يا " + userName;
 
-            if (history.length > 0) {
-                ordersList.innerHTML = history.reverse().map(order => `
-                    <div class="order-box">
-                        <div class="order-date">${order.date}</div>
-                        <div class="order-items">${order.items.join(' + ')}</div>
-                        <div style="color: #1abc9c; font-weight: bold;">الإجمالي: ${order.total} د.ع</div>
+        // 4. جلب وعرض سجل الطلبات
+        const ordersList = document.getElementById('orders-list');
+        const history = JSON.parse(localStorage.getItem('orderHistory')) || [];
+
+        if (history.length > 0) {
+            ordersList.innerHTML = history.reverse().map(order => `
+                <div class="order-box">
+                    <div class="order-date">📅 ${order.date}</div>
+                    <div class="order-items">🛍️ ${order.items.join(' + ')}</div>
+                    <div style="color: #1abc9c; font-weight: bold; margin-top: 5px;">
+                        الإجمالي: ${order.total} د.ع
                     </div>
-                `).join('');
-            }
-        });
-    </script>
+                </div>
+            `).join('');
+        } else {
+            ordersList.innerHTML = '<p style="text-align: center; color: #999;">لا توجد طلبات سابقة حتى الآن.</p>';
+        }
+    });
+</script>
 </body>
 </html>
