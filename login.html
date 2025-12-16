@@ -105,10 +105,22 @@ localStorage.setItem('userName', user.name || phone);
             } else {
                 alert('خطأ: رقم الهاتف أو كلمة المرور غير صحيحة!');
             }
+            function showMyPassword() {
+    let phone = prompt("أدخل رقم هاتفك المسجل للتأكد:");
+    let users = JSON.parse(localStorage.getItem('registered_users')) || [];
+    let user = users.find(u => u.phone === phone);
+
+    if (user) {
+        alert("كلمة السر الخاصة بك هي: " + user.password);
+    } else {
+        alert("هذا الرقم غير مسجل في هذا الجهاز.");
+    }
+}
         }
     </script>
 
 </body>
 </html>
+
 
 
