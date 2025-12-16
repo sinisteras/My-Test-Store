@@ -15,21 +15,21 @@
             <h1>Urban Gent</h1>
         </div>
 
-        <nav>
-            <ul>
-                <li><a href="index.html">الرئيسية</a></li>
-                
-                <span id="guest-links" style="display: flex; gap: 15px;">
-                    <li><a href="signup.html" class="login-btn">حساب جديد</a></li>
-                    <li><a href="login.html" class="login-btn">دخول</a></li>
-                </span>
+       <nav>
+    <ul style="display: flex; align-items: center; list-style: none; gap: 15px;">
+        <li><a href="index.html">الرئيسية</a></li>
+        
+        <span id="guest-links" style="display: flex; gap: 15px;">
+            <li><a href="signup.html" class="login-btn">حساب جديد</a></li>
+            <li><a href="login.html" class="login-btn">دخول</a></li>
+        </span>
 
-                <span id="user-links" style="display: none; align-items: center; gap: 15px;">
-                    <li style="color: #1abc9c; font-weight: bold;">أهلاً <span id="user-name-display"></span></li>
-                    <li><a href="#" onclick="logoutUser()" style="color: red; cursor: pointer;">خروج</a></li>
-                </span>
-            </ul>
-        </nav>
+        <span id="user-links" style="display: none; align-items: center; gap: 15px;">
+            <li><a href="profile.html" style="color: #1abc9c; font-weight: bold; text-decoration: none;">👤 حسابي</a></li>
+            <li><a href="#" onclick="logoutUser()" style="color: #e74c3c; cursor: pointer; text-decoration: none;">خروج</a></li>
+        </span>
+    </ul>
+</nav>
         
         <div id="cart-container">
             <a href="cart.html" style="text-decoration: none; color: white;">
@@ -80,4 +80,5 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
