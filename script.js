@@ -225,19 +225,37 @@ function renderCartPage() {
     const container = document.getElementById('cart-items-container');
     const totalEl = document.getElementById('final-total');
     if (!container) return;
+
     if (cart.length === 0) {
         container.innerHTML = '<tr><td colspan="5">السلة فارغة 🛒</td></tr>';
         totalEl.textContent = '0';
         return;
     }
+
     let subtotal = 0;
     container.innerHTML = cart.map((item, index) => {
         subtotal += item.price * item.qty;
-        return `<tr><td><img src="${item.image}" width="50"></td><td>${item.name}</td><td>${item.price}</td><td>${item.qty}</td><td><button onclick="removeItem(${index})">❌</button></td></tr>`;
+        return `
+            <tr>
+                <td><img src="${item.image}" width="50"></td>
+                <td>${item.name}<br><small>${item.size} | ${item.color}</small></td>
+                <td>${item.price.toLocaleString()}</td>
+                <td>
+                    <button onclick="changeQty(${index}, -1)">-</button>
+                    ${item.qty}
+                    <button onclick="changeQty(${index}, 1)">+</button>
+                </td>
+                <td><button onclick="removeItem(${index})">❌</button></td>
+            </tr>`;
     }).join('');
-    totalEl.textContent = subtotal.toLocaleString();
-}
 
+    // --- الجزء المضاف لحساب الخصم ---
+    const discountPercent = parseFloat(localStorage.getItem('discount')) || 0;
+    const finalTotal = subtotal - (subtotal * discountPercent);
+    
+    // عرض السعر النهائي بعد الخصم
+    totalEl.textContent = finalTotal.toLocaleString();
+}
 function removeItem(index) {
     cart.splice(index, 1);
     localStorage.setItem('myCart', JSON.stringify(cart));
@@ -270,3 +288,4 @@ function applyCoupon() {
         renderCartPage();
     }
 }
+
