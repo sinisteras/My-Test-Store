@@ -344,9 +344,6 @@ function updateCartButtons() {
 }
 
 // --- إتمام الطلب ---
-// أضف async قبل كلمة function
-// --- إتمام الطلب ---
-// --- إتمام الطلب ---
 async function checkoutWhatsApp() {
     const user = localStorage.getItem('userName');
     if (!user) return alert("يرجى تسجيل الدخول أولاً 🔐");
@@ -447,6 +444,7 @@ function applyCoupon() {
         renderCartPage();
     }
 }
+
 
 
 
