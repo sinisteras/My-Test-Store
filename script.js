@@ -329,4 +329,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 function logoutUser() { localStorage.clear(); window.location.href = 'index.html'; }
+// دالة التسجيل باستخدام رقم الهاتف
+function registerUser() {
+    const phone = document.getElementById('phone').value.trim();
+    const pass = document.getElementById('password').value.trim();
+
+    if (phone.length < 10) {
+        alert("يرجى إدخال رقم هاتف صحيح");
+        return;
+    }
+
+    // 1. جلب قائمة المستخدمين المسجلين سابقاً أو إنشاء قائمة جديدة
+    let users = JSON.parse(localStorage.getItem('registered_users')) || [];
+
+    // 2. التحقق هل الرقم موجود مسبقاً؟
+    const isExist = users.find(u => u.phone === phone);
+
+    if (isExist) {
+        alert("هذا الرقم مستخدم بالفعل! يرجى تسجيل الدخول ❌");
+        window.location.href = 'login.html';
+    } else {
+        // 3. إضافة المستخدم الجديد
+        users.push({ phone: phone, password: pass });
+        localStorage.setItem('registered_users', JSON.stringify(users));
+
+        // تسجيل الدخول تلقائياً بعد التسجيل
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userName', phone); // سيظهر رقم الهاتف بدلاً من الاسم
+
+        alert("تم إنشاء الحساب بنجاح ✅");
+        window.location.href = 'index.html';
+    }
+}
 
