@@ -346,6 +346,7 @@ function updateCartButtons() {
 // --- إتمام الطلب ---
 // أضف async قبل كلمة function
 // --- إتمام الطلب ---
+// --- إتمام الطلب ---
 async function checkoutWhatsApp() {
     const user = localStorage.getItem('userName');
     if (!user) return alert("يرجى تسجيل الدخول أولاً 🔐");
@@ -353,7 +354,7 @@ async function checkoutWhatsApp() {
 
     const finalTotal = document.getElementById('final-total').textContent;
 
-    // تجهيز بيانات الطلب للسجل والسحابة
+    // --- (الخطوة الثالثة: حفظ الطلب في السحابة وفي سجل البروفايل) ---
     const orderData = {
         customerName: user,
         date: new Date().toLocaleString('ar-EG'),
@@ -363,20 +364,20 @@ async function checkoutWhatsApp() {
     };
 
     try {
-        // 1. حفظ في Firebase
+        // حفظ في Firebase
         await addDoc(collection(db, "orders"), orderData);
         
-        // 2. حفظ في سجل الطلبات المحلي (لكي يظهر في صفحة البروفايل فوراً)
+        // حفظ في سجل الطلبات المحلي ليظهر في صفحة البروفايل
         let history = JSON.parse(localStorage.getItem('orderHistory')) || [];
         history.push(orderData);
         localStorage.setItem('orderHistory', JSON.stringify(history));
-        
-        console.log("تم تسجيل الطلب في السحابة والسجل المحلي ✅");
+
+        console.log("تم تسجيل الطلب في السحابة بنجاح ✅");
     } catch (error) {
         console.error("فشل الحفظ في السحابة: ", error);
     }
 
-    // 3. إعداد رسالة الواتساب
+    // تجهيز رسالة الواتساب
     let msg = `🛍️ *طلب جديد من Urban Gent*%0a`;
     msg += `👤 *الزبون:* ${user}%0a`;
     msg += `--------------------------%0a`;
@@ -385,22 +386,18 @@ async function checkoutWhatsApp() {
     });
     msg += `%0a💰 *الإجمالي: ${finalTotal} د.ع*`;
 
-    // 4. تنظيف السلة
+    // تفريغ السلة وتحديث الواجهة
     localStorage.removeItem('myCart');
     cart = [];
     updateCartIcon();
 
-    // 5. فتح واتساب وتوجيه المستخدم للبروفايل
+    // فتح واتساب
     window.open(`https://wa.me/${MY_PHONE_NUMBER}?text=${msg}`, '_blank');
-    
+
+    // توجيه الزبون لصفحة ملفه الشخصي بعد ثانية واحدة
     setTimeout(() => {
         window.location.href = 'profile.html';
     }, 1500);
-}
-    // توجيه الزبون لصفحة ملفه الشخصي لرؤية الطلب في السجل
-    setTimeout(() => {
-        window.location.href = 'profile.html';
-    }, 1000);
 }
 // --- نظام تسجيل الخروج ---
 function logoutUser() {
@@ -450,6 +447,7 @@ function applyCoupon() {
         renderCartPage();
     }
 }
+
 
 
 
