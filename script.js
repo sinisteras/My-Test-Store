@@ -330,20 +330,48 @@ function updateCartButtons() {
 
 // --- إتمام الطلب ---
 function checkoutWhatsApp() {
-    const user = localStorage.getItem('userName');
+    const userPhone = localStorage.getItem('userPhone'); // نحتاج رقم الهاتف لربط الطلب بصاحبه
+    const userName = localStorage.getItem('userName');
+    if (!userName) return alert("يرجى تسجيل الدخول أولاً");
     if (cart.length === 0) return alert('السلة فارغة!');
 
-    let msg = `🛍️ *طلب جديد من Urban Gent*%0a`;
-    msg += `👤 *الزبون:* ${user}%0a`;
-    msg += `--------------------------%0a`;
+    const finalTotal = document.getElementById('final-total').textContent;
 
-    cart.forEach((item, i) => {
-        msg += `${i+1}. *${item.name}*%0a القياس: ${item.size} | اللون: ${item.color}%0a الكمية: ${item.qty}%0a%0a`;
-    });
-
-    msg += `💰 *الإجمالي النهائي: ${document.getElementById('final-total').textContent} د.ع*`;
+    // --- الجزء الجديد: حفظ الطلب في سجل الموقع ---
+    let allOrders = JSON.parse(localStorage.getItem('all_orders')) || [];
     
+    const newOrder = {
+        id: Date.now(), // رقم مميز للطلب
+        customerPhone: userPhone,
+        customerName: userName,
+        items: [...cart], // نسخة من المنتجات
+        total: finalTotal,
+        date: new Date().toLocaleDateString('ar-EG'),
+        status: "قيد الانتظار"
+    };
+
+    allOrders.push(newOrder);
+    localStorage.setItem('all_orders', JSON.stringify(allOrders));
+    // ------------------------------------------
+
+    // إعداد رسالة الواتساب كما كانت
+    let msg = `🛍️ *طلب جديد من Urban Gent*%0a`;
+    msg += `👤 *الزبون:* ${userName}%0a`;
+    msg += `--------------------------%0a`;
+    cart.forEach((item, i) => {
+        msg += `${i+1}. *${item.name}* (قياس: ${item.size} | لون: ${item.color}) عدد: ${item.qty}%0a`;
+    });
+    msg += `%0a💰 *الإجمالي: ${finalTotal} د.ع*`;
+
+    // تفريغ السلة بعد الطلب
+    localStorage.removeItem('myCart');
+    cart = [];
+    updateCartIcon();
+
     window.open(`https://wa.me/${MY_PHONE_NUMBER}?text=${msg}`, '_blank');
+    
+    // توجيه الزبون لصفحة طلباته بعد الإرسال
+    window.location.href = 'profile.html'; 
 }
 
 // --- نظام تسجيل الخروج ---
@@ -394,6 +422,7 @@ function applyCoupon() {
         renderCartPage();
     }
 }
+
 
 
 
