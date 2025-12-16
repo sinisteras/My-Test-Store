@@ -228,24 +228,45 @@ window.logoutUser = () => {
 
 window.checkoutWhatsApp = async () => {
     const user = localStorage.getItem('userName');
+    if (!user) return alert("يرجى تسجيل الدخول أولاً 🔐");
+    if (cart.length === 0) return alert('السلة فارغة!');
+
     const finalTotal = document.getElementById('final-total')?.textContent;
-    const msg = `🛍️ طلب جديد من: ${user}%0a💰 الإجمالي: ${finalTotal}`;
-    
-    // 1. تنظيف التخزين
+
+    // 1. تجميع تفاصيل المنتجات في نص واحد
+    let productsList = cart.map(item => 
+        `- ${item.name} (${item.size}/${item.color}) عدد: ${item.qty}`
+    ).join('%0a'); // %0a تعني سطر جديد في الواتساب
+
+    // 2. تجهيز نص الرسالة بالكامل
+    let msg = `🛍️ *طلب جديد من Urban Gent*%0a%0a` +
+              `👤 *الزبون:* ${user}%0a` +
+              `📦 *الطلبات:*%0a${productsList}%0a%0a` +
+              `💰 *الإجمالي النهائي: ${finalTotal} د.ع*`;
+
+    // 3. تخزين الطلب في Firebase (اختياري لكن مفيد)
+    try {
+        await addDoc(collection(db, "orders"), {
+            customerName: user,
+            items: cart,
+            total: finalTotal,
+            date: new Date().toLocaleString()
+        });
+    } catch (e) { console.error("Firebase Error:", e); }
+
+    // 4. تصفير السلة والخصم
     localStorage.removeItem('myCart');
     localStorage.removeItem('discount');
     
-    // 2. تصفير السلة في الكود الحالي وتحديث الواجهة
-    if (typeof cart !== 'undefined') {
-        cart = []; // تصفير مصفوفة السلة
-        if (typeof updateCartIcon === 'function') updateCartIcon();
-    }
-
-    // 3. فتح الواتساب
+    // 5. فتح الواتساب بالرسالة الجديدة
     window.open(`https://wa.me/${MY_PHONE_NUMBER}?text=${msg}`, '_blank');
+    
+    // إعادة توجيه للرئيسية بعد فترة قصيرة
+    setTimeout(() => { window.location.href = 'index.html'; }, 1000);
 };
 
 // تشغيل التطبيق عند التحميل
 document.addEventListener('DOMContentLoaded', initApp);
+
 
 
