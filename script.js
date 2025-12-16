@@ -1,4 +1,4 @@
-// استيراد Firebase (ضع هذا في أعلى ملف script.js)
+// استيراد Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -13,14 +13,10 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-// ==========================================
-// ⚙️ إعدادات المتجر ورقم الواتساب
-// ==========================================
+
 const MY_PHONE_NUMBER = "9647724329890"; 
 
-// ==========================================
-// 📦 1. قاعدة البيانات (مع نظام المخزون)
-// ==========================================
+// 📦 1. قاعدة البيانات
 const allProducts = [
     {
         id: 1,
@@ -81,7 +77,6 @@ const allProducts = [
         ],
         gallery: ["images/sweater.jpg", "images/sweater_red.jpg", "images/sweater_yellow.jpg"]
     },
-
     {
         id: 5,
         name: "بنطلون رسمي",
@@ -98,6 +93,55 @@ const allProducts = [
         gallery: ["images/pant.jpg"]
     }
 ];
+
+// --- 🛒 نظام السلة ---
+let cart = JSON.parse(localStorage.getItem('myCart')) || [];
+
+function updateCartIcon() {
+    const countEl = document.getElementById('cart-count');
+    if (countEl) countEl.textContent = cart.reduce((total, item) => total + item.qty, 0);
+}
+updateCartIcon();
+
+// --- 📄 منطق العرض ---
+document.addEventListener('DOMContentLoaded', () => {
+    const user = localStorage.getItem('userName');
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
+    // تحديث الهيدر
+    if (isLoggedIn && user) {
+        if(document.getElementById('guest-links')) document.getElementById('guest-links').style.display = 'none';
+        if(document.getElementById('user-links')) document.getElementById('user-links').style.display = 'flex';
+        const nameDisplay = document.getElementById('user-name-display');
+        if (nameDisplay) nameDisplay.textContent = user;
+    }
+
+    // عرض المنتجات في الرئيسية (تم إصلاحها هنا)
+    const grid = document.querySelector('.products-grid');
+    if (grid) {
+        grid.innerHTML = allProducts.map(p => `
+            <div class="product-card">
+                <img src="${p.image}" onerror="this.src='https://via.placeholder.com/300'" onclick="window.location.href='product.html?id=${p.id}'" style="cursor:pointer">
+                <h3>${p.name}</h3>
+                <p class="price">${p.price.toLocaleString()} د.ع</p>
+                <button onclick="window.location.href='product.html?id=${p.id}'">عرض التفاصيل</button>
+            </div>
+        `).join('');
+    }
+
+    if (document.getElementById('cart-items-container')) {
+        renderCartPage();
+    }
+});
+
+// إتاحة الدوال للنافذة العالمية (Global Scope)
+window.goToProduct = (id) => window.location.href = `product.html?id=${id}`;
+window.checkoutWhatsApp = checkoutWhatsApp;
+window.logoutUser = logoutUser;
+window.applyCoupon = applyCoupon;
+window.changeQty = changeQty;
+window.removeItem = removeItem;
+
 // --- صفحة تفاصيل المنتج ---
 if (window.location.pathname.includes('product.html')) {
     const params = new URLSearchParams(window.location.search);
@@ -105,44 +149,20 @@ if (window.location.pathname.includes('product.html')) {
     const product = allProducts.find(p => p.id === id);
 
     if (product) {
-        // تحديث النصوص والصور
         const mainImg = document.getElementById('p-img');
         if (mainImg) mainImg.src = product.image;
-        
         document.getElementById('p-name').textContent = product.name;
         document.getElementById('p-price').textContent = product.price.toLocaleString() + ' د.ع';
         document.getElementById('p-desc').textContent = product.description;
 
-        // توليد الصور المصغرة
-        const thumbsContainer = document.getElementById('thumbnails-container');
-        if (thumbsContainer && product.gallery) {
-            thumbsContainer.innerHTML = product.gallery.map(imgSrc => `
-                <img src="${imgSrc}" onclick="document.getElementById('p-img').src='${imgSrc}'" 
-                     style="width:60px; height:60px; object-fit:cover; border:2px solid #ddd; border-radius:5px; cursor:pointer;">
-            `).join('');
-        }
-
-        // توليد خيارات القياس واللون
         const optionsContainer = document.getElementById('options-container');
         if (optionsContainer) {
-            let html = '';
-            if (product.sizes) {
-                html += `<label>القياس:</label> <select id="size-select" onchange="updateStockStatus(${product.id})">
-                            <option value="">اختر..</option>
-                            ${product.sizes.map(s => `<option value="${s}">${s}</option>`).join('')}
-                         </select><br><br>`;
-            }
-            if (product.colors) {
-                html += `<label>اللون:</label> <select id="color-select" onchange="updateStockStatus(${product.id})">
-                            <option value="">اختر..</option>
-                            ${product.colors.map(c => `<option value="${c}">${c}</option>`).join('')}
-                         </select>`;
-            }
+            let html = `<label>القياس:</label> <select id="size-select" onchange="updateStockStatus(${product.id})"><option value="">اختر..</option>${product.sizes.map(s => `<option value="${s}">${s}</option>`).join('')}</select><br><br>`;
+            html += `<label>اللون:</label> <select id="color-select" onchange="updateStockStatus(${product.id})"><option value="">اختر..</option>${product.colors.map(c => `<option value="${c}">${c}</option>`).join('')}</select>`;
             html += `<div id="stock-display" style="margin-top:15px; font-weight:bold; color:#e67e22;">يرجى اختيار القياس واللون</div>`;
             optionsContainer.innerHTML = html;
         }
 
-        // تفعيل زر الإضافة
         const addBtn = document.getElementById('add-btn');
         if (addBtn) {
             addBtn.onclick = () => {
@@ -155,205 +175,23 @@ if (window.location.pathname.includes('product.html')) {
     }
 }
 
-// دالة تحديث حالة المخزون (تظهر للزبون إذا كانت القطعة متوفرة أم لا)
-function updateStockStatus(productId) {
+// الدوال المساعدة (Add to Cart, Update Status, الخ...)
+function addToCart(productId, s, c) {
     const product = allProducts.find(p => p.id === productId);
-    const s = document.getElementById('size-select')?.value;
-    const c = document.getElementById('color-select')?.value;
-    const display = document.getElementById('stock-display');
-    const btn = document.getElementById('add-btn');
-
-    if (s && c && product.inventory) {
-        const variant = product.inventory.find(v => v.size === s && v.color === c);
-        if (variant && variant.stock > 0) {
-            display.textContent = `متوفر: ${variant.stock} قطعة ✅`;
-            display.style.color = "#27ae60";
-            btn.disabled = false; btn.style.opacity = "1";
-        } else {
-            display.textContent = "للأسف، نفدت هذه التشكيلة ❌";
-            display.style.color = "#c0392b";
-            btn.disabled = true; btn.style.opacity = "0.5";
-        }
-    }
-}
-// ==========================================
-// 🛒 2. نظام السلة الأساسي
-// ==========================================
-let cart = JSON.parse(localStorage.getItem('myCart')) || [];
-updateCartIcon();
-
-function updateCartIcon() {
-    const countEl = document.getElementById('cart-count');
-    if (countEl) countEl.textContent = cart.reduce((total, item) => total + item.qty, 0);
-}
-
-function addToCart(productId, selectedSize = null, selectedColor = null) {
-    const product = allProducts.find(p => p.id === productId);
-    const finalSize = selectedSize || "";
-    const finalColor = selectedColor || "";
-
-    const existingItem = cart.find(item => item.id === productId && item.size === finalSize && item.color === finalColor);
-
-    if (existingItem) {
-        existingItem.qty++;
-    } else {
-        cart.push({ ...product, qty: 1, size: finalSize, color: finalColor });
-    }
-    
+    const existing = cart.find(i => i.id === productId && i.size === s && i.color === c);
+    if (existing) existing.qty++;
+    else cart.push({ ...product, qty: 1, size: s, color: c });
     localStorage.setItem('myCart', JSON.stringify(cart));
     updateCartIcon();
     alert('تمت الإضافة للسلة! ✅');
 }
 
-// ==========================================
-// 📄 3. منطق الصفحات والتحكم بالعرض
-// ==========================================
-
-// --- تحديث حالة الهيدر (أهلاً فلان / دخول) ---
-document.addEventListener('DOMContentLoaded', () => {
-    const user = localStorage.getItem('userName');
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-
-    if (isLoggedIn && user) {
-        if(document.getElementById('guest-links')) document.getElementById('guest-links').style.display = 'none';
-        if(document.getElementById('user-links')) document.getElementById('user-links').style.display = 'flex';
-        const nameDisplay = document.getElementById('user-name-display');
-        if (nameDisplay) nameDisplay.textContent = user;
-    }
-
-    // تشغيل دوال الصفحات المحددة
-    if (document.getElementById('cart-items-container')) {
-        renderCartPage();
-    }
-});
-
-// --- الصفحة الرئيسية ---
-if (window.location.pathname.includes('index.html') || window.location.pathname.endsWith('/')) {
-   // --- الصفحة الرئيسية ---
-// ابحث عن هذا الجزء واستبدله بهذا الكود
-const grid = document.querySelector('.products-grid');
-if (grid) {
-    grid.innerHTML = allProducts.map(p => `
-        <div class="product-card">
-            <img src="${p.image}" onerror="this.src='https://via.placeholder.com/300'" onclick="goToProduct(${p.id})" style="cursor:pointer">
-            <h3>${p.name}</h3>
-            <p class="price">${p.price.toLocaleString()} د.ع</p>
-            <button onclick="goToProduct(${p.id})">عرض التفاصيل</button>
-        </div>
-    `).join('');
-}
-}
-
-function goToProduct(id) {
-    window.location.href = `product.html?id=${id}`;
-}
-
-// --- صفحة السلة ---
-function renderCartPage() {
-    const container = document.getElementById('cart-items-container');
-    const totalEl = document.getElementById('final-total');
-    if (!container) return;
-
-    if (cart.length === 0) {
-        container.innerHTML = '<tr><td colspan="5">السلة فارغة 🛒</td></tr>';
-        totalEl.textContent = '0';
-        updateCartButtons(); // تحديث الأزرار حتى لو فارغة
-        return;
-    }
-
-    let subtotal = 0;
-    container.innerHTML = cart.map((item, index) => {
-        subtotal += item.price * item.qty;
-        return `
-            <tr>
-                <td><img src="${item.image}" width="50"></td>
-                <td>${item.name}<br><small>${item.size} | ${item.color}</small></td>
-                <td>${item.price.toLocaleString()}</td>
-                <td>
-                    <button onclick="changeQty(${index}, -1)">-</button>
-                    ${item.qty}
-                    <button onclick="changeQty(${index}, 1)">+</button>
-                </td>
-                <td><button onclick="removeItem(${index})">❌</button></td>
-            </tr>`;
-    }).join('');
-
-    const discountPercent = parseFloat(localStorage.getItem('discount')) || 0;
-    const finalTotal = subtotal - (subtotal * discountPercent);
-    totalEl.textContent = finalTotal.toLocaleString();
-    
-    updateCartButtons(); // تحديث أزرار الشحن/الدخول
-}
-
-function changeQty(index, delta) {
-    const item = cart[index];
-    const product = allProducts.find(p => p.id === item.id);
-    
-    // البحث عن كمية المخزون المتوفرة لهذا القياس واللون تحديداً
-    const variant = product.inventory.find(v => v.size === item.size && v.color === item.color);
-    const maxStock = variant ? variant.stock : 0;
-
-    if (delta > 0) {
-        // إذا كان الزبون يريد الزيادة، نتحقق من المخزون
-        if (item.qty + delta > maxStock) {
-            alert(`عذراً، المتوفر في المخزون هو ${maxStock} قطع فقط من هذا النوع ⚠️`);
-            return; // توقف، لا تزيد الكمية
-        }
-    }
-
-    // تنفيذ التغيير (زيادة أو نقصان)
-    item.qty += delta;
-
-    // التأكد من أن الكمية لا تقل عن 1
-    if (item.qty < 1) item.qty = 1;
-
-    // حفظ التعديلات وتحديث الصفحة
-    localStorage.setItem('myCart', JSON.stringify(cart));
-    renderCartPage();
-    updateCartIcon();
-}
-
-function removeItem(index) {
-    cart.splice(index, 1);
-    localStorage.setItem('myCart', JSON.stringify(cart));
-    renderCartPage();
-    updateCartIcon();
-}
-
-// --- نظام التحقق من الدخول في السلة ---
-function updateCartButtons() {
-    const actionArea = document.getElementById('checkout-action-area');
-    if (!actionArea) return;
-
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-
-    if (isLoggedIn) {
-        actionArea.innerHTML = `
-            <button onclick="checkoutWhatsApp()" style="width: 100%; padding: 15px; background: #25D366; color: white; border: none; font-weight: bold; font-size: 1.1em; cursor: pointer; border-radius: 5px; margin-top: 15px;">
-                إتمام الطلب عبر واتساب 📱
-            </button>
-        `;
-    } else {
-        actionArea.innerHTML = `
-            <div style="background: #fff3cd; color: #856404; padding: 15px; border-radius: 8px; border: 1px solid #ffeeba; text-align: center; margin-top: 15px;">
-                <p style="margin-bottom: 10px; font-weight: bold;">يجب تسجيل الدخول لإرسال الطلب 🔐</p>
-                <a href="login.html" style="display: block; background: #2c3e50; color: white; padding: 10px; text-decoration: none; border-radius: 5px; font-weight: bold;">
-                    تسجيل الدخول الآن
-                </a>
-            </div>
-        `;
-    }
-}
-
-// --- إتمام الطلب ---
 async function checkoutWhatsApp() {
     const user = localStorage.getItem('userName');
     if (!user) return alert("يرجى تسجيل الدخول أولاً 🔐");
     if (cart.length === 0) return alert('السلة فارغة!');
-
     const finalTotal = document.getElementById('final-total').textContent;
 
-    // --- (الخطوة الثالثة: حفظ الطلب في السحابة وفي سجل البروفايل) ---
     const orderData = {
         customerName: user,
         date: new Date().toLocaleString('ar-EG'),
@@ -363,67 +201,50 @@ async function checkoutWhatsApp() {
     };
 
     try {
-        // حفظ في Firebase
         await addDoc(collection(db, "orders"), orderData);
-        
-        // حفظ في سجل الطلبات المحلي ليظهر في صفحة البروفايل
         let history = JSON.parse(localStorage.getItem('orderHistory')) || [];
         history.push(orderData);
         localStorage.setItem('orderHistory', JSON.stringify(history));
+    } catch (e) { console.error(e); }
 
-        console.log("تم تسجيل الطلب في السحابة بنجاح ✅");
-    } catch (error) {
-        console.error("فشل الحفظ في السحابة: ", error);
-    }
-
-    // تجهيز رسالة الواتساب
-    let msg = `🛍️ *طلب جديد من Urban Gent*%0a`;
-    msg += `👤 *الزبون:* ${user}%0a`;
-    msg += `--------------------------%0a`;
-    cart.forEach((item, i) => {
-        msg += `${i+1}. *${item.name}* (${item.size}/${item.color}) عدد: ${item.qty}%0a`;
-    });
-    msg += `%0a💰 *الإجمالي: ${finalTotal} د.ع*`;
-
-    // تفريغ السلة وتحديث الواجهة
+    let msg = `🛍️ *طلب جديد من Urban Gent*%0a👤 *الزبون:* ${user}%0a💰 *الإجمالي: ${finalTotal} د.ع*`;
     localStorage.removeItem('myCart');
     cart = [];
     updateCartIcon();
-
-    // فتح واتساب
     window.open(`https://wa.me/${MY_PHONE_NUMBER}?text=${msg}`, '_blank');
-
-    // توجيه الزبون لصفحة ملفه الشخصي بعد ثانية واحدة
-    setTimeout(() => {
-        window.location.href = 'profile.html';
-    }, 1500);
+    setTimeout(() => { window.location.href = 'profile.html'; }, 1500);
 }
-// --- نظام تسجيل الخروج ---
+
 function logoutUser() {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('userName');
-    alert("تم تسجيل الخروج");
     window.location.href = 'index.html';
 }
 
-// دالة استعادة كلمة المرور
-function recoverPassword() {
-    const phoneInput = document.getElementById('recover-phone');
-    if (!phoneInput) return;
-
-    const phone = phoneInput.value.trim();
-    let users = JSON.parse(localStorage.getItem('registered_users')) || [];
-    
-    const user = users.find(u => u.phone === phone);
-
-    if (user) {
-        // تنبيه يظهر كلمة السر المخزنة في متصفحه
-        alert(`تم العثور على حسابك بنجاح! ✅\nكلمة المرور الخاصة بك هي: ${user.password}`);
-        window.location.href = 'login.html';
-    } else {
-        alert("عذراً، هذا الرقم غير مسجل على هذا الجهاز ❌");
+function renderCartPage() {
+    const container = document.getElementById('cart-items-container');
+    const totalEl = document.getElementById('final-total');
+    if (!container) return;
+    if (cart.length === 0) {
+        container.innerHTML = '<tr><td colspan="5">السلة فارغة 🛒</td></tr>';
+        totalEl.textContent = '0';
+        return;
     }
+    let subtotal = 0;
+    container.innerHTML = cart.map((item, index) => {
+        subtotal += item.price * item.qty;
+        return `<tr><td><img src="${item.image}" width="50"></td><td>${item.name}</td><td>${item.price}</td><td>${item.qty}</td><td><button onclick="removeItem(${index})">❌</button></td></tr>`;
+    }).join('');
+    totalEl.textContent = subtotal.toLocaleString();
 }
+
+function removeItem(index) {
+    cart.splice(index, 1);
+    localStorage.setItem('myCart', JSON.stringify(cart));
+    renderCartPage();
+    updateCartIcon();
+}
+
 function applyCoupon() {
     const codeInput = document.getElementById('coupon-code');
     if (!codeInput) return;
@@ -431,31 +252,21 @@ function applyCoupon() {
     const code = codeInput.value.trim().toUpperCase();
     const isUsed = localStorage.getItem('coupon_IQ2025_used');
 
+    // 1. التحقق إذا كان الكود مستخدم سابقاً
     if (isUsed === 'true') {
         alert("عذراً، لقد استخدمت هذا الكود مسبقاً! ❌");
         return;
     }
 
+    // 2. التحقق من صحة الكود (مثلاً الكود هو IQ2025)
     if (code === "IQ2025") {
         localStorage.setItem('discount', 0.10); // خصم 10%
+        localStorage.setItem('coupon_IQ2025_used', 'true'); // تعليم الكود كمستخدم
         alert("تهانينا! تم تطبيق خصم 10% بنجاح ✅");
-        renderCartPage(); // إعادة بناء الصفحة لتحديث السعر
+        renderCartPage(); // تحديث السعر في الصفحة فوراً
     } else {
         alert("كود الخصم غير صحيح ❌");
         localStorage.setItem('discount', 0);
         renderCartPage();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
