@@ -79,11 +79,11 @@
         <p class="link-text"><a href="index.html">العودة للمتجر</a></p>
     </div>
 
-<script src="script.js"></script> <script>
+<script>
     document.getElementById('signupForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // جلب البيانات من الحقول بالـ ID الصحيح
+        // 1. جلب البيانات من الحقول (الأسماء هنا: fullname و phone)
         const phone = document.getElementById('phone').value.trim();
         const pass = document.getElementById('password').value.trim();
         const fullname = document.getElementById('fullname').value.trim();
@@ -93,7 +93,7 @@
             return;
         }
 
-        // جلب قائمة المستخدمين الحالية أو إنشاء قائمة فارغة
+        // جلب قائمة المستخدمين الحالية
         let users = JSON.parse(localStorage.getItem('registered_users')) || [];
 
         // التأكد من أن الرقم غير مسجل مسبقاً
@@ -102,7 +102,7 @@
             return;
         }
 
-        // إضافة المستخدم الجديد للقائمة
+        // إضافة المستخدم الجديد للقائمة الكلية
         users.push({ 
             phone: phone, 
             password: pass, 
@@ -112,13 +112,18 @@
         // حفظ القائمة المحدثة
         localStorage.setItem('registered_users', JSON.stringify(users));
 
+        // 2. التعديل المهم هنا: خزن المتغيرات الصحيحة لكي يراها زر الشراء ✅
+        localStorage.setItem('userName', fullname); 
+        localStorage.setItem('userPhone', phone);
+
         alert('تم إنشاء الحساب بنجاح! ✅');
-        window.location.href = 'login.html';
+        
+        // التوجه لصفحة تسجيل الدخول أو الرئيسية مباشرة
+        window.location.href = 'index.html'; 
     });
 </script>
 
 </body>
 
 </html>
-
 

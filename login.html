@@ -90,44 +90,51 @@
 
     <script src="script.js"></script>
     
-    <script>
-        function handleLogin() {
-            const phone = document.getElementById('loginPhone').value.trim();
-            const pass = document.getElementById('loginPass').value.trim();
+<script>
+    function handleLogin() {
+        const phone = document.getElementById('loginPhone').value.trim();
+        const pass = document.getElementById('loginPass').value.trim();
 
-            if(!phone || !pass) {
-                alert("يرجى ملء كافة الحقول");
-                return;
-            }
-
-            let users = JSON.parse(localStorage.getItem('registered_users')) || [];
-            const user = users.find(u => u.phone === phone && u.password === pass);
-
-            if (user) {
-                alert('تم تسجيل الدخول بنجاح! أهلاً بك.');
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('userName', user.name || phone);
-                window.location.href = 'index.html';
-            } else {
-                alert('خطأ: رقم الهاتف أو كلمة المرور غير صحيحة!');
-            }
+        if(!phone || !pass) {
+            alert("يرجى ملء كافة الحقول");
+            return;
         }
 
-        // هذه الدالة يجب أن تكون خارج handleLogin لتعمل بشكل مستقل
-        function showMyPassword() {
-            let phone = prompt("أدخل رقم هاتفك المسجل للتأكد:");
-            if (!phone) return;
+        // جلب قائمة المستخدمين من المتصفح
+        let users = JSON.parse(localStorage.getItem('registered_users')) || [];
+        
+        // البحث عن المستخدم الذي يطابق الرقم والباسورد
+        const user = users.find(u => u.phone === phone && u.password === pass);
 
-            let users = JSON.parse(localStorage.getItem('registered_users')) || [];
-            let user = users.find(u => u.phone === phone);
+        if (user) {
+            alert('تم تسجيل الدخول بنجاح! أهلاً بك.');
+            
+            // --- التعديل المهم هنا لربط البيانات بالسلة والواتساب ---
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userName', user.name || "زبون"); // حفظ الاسم
+            localStorage.setItem('userPhone', user.phone);         // حفظ رقم الهاتف ✅
+            // --------------------------------------------------
 
-            if (user) {
-                alert("✅ تم العثور على الحساب!\nكلمة السر الخاصة بك هي: " + user.password);
-            } else {
-                alert("❌ عذراً، هذا الرقم غير مسجل في هذا المتصفح.");
-            }
+            window.location.href = 'index.html';
+        } else {
+            alert('خطأ: رقم الهاتف أو كلمة المرور غير صحيحة!');
         }
-    </script>
+    }
+
+    function showMyPassword() {
+        let phone = prompt("أدخل رقم هاتفك المسجل للتأكد:");
+        if (!phone) return;
+
+        let users = JSON.parse(localStorage.getItem('registered_users')) || [];
+        let user = users.find(u => u.phone === phone);
+
+        if (user) {
+            alert("✅ تم العثور على الحساب!\nكلمة السر الخاصة بك هي: " + user.password);
+        } else {
+            alert("❌ عذراً، هذا الرقم غير مسجل في هذا المتصفح.");
+        }
+    }
+</script>
 
 </body>
 </html>
