@@ -252,7 +252,7 @@ window.checkoutWhatsApp = async () => {
             `- ${item.name} (${item.size}/${item.color}) x ${item.qty}`
         ).join('%0a');
 
-        let msg = `🛍️ *طلب جديد من Urban Gent*%0a%0a` +
+        let msg = `🛍️ *طلب جديد من Urban*%0a%0a` +
                   `👤 *الزبون:* ${user}%0a` +
                   `📞 *الهاتف:* ${phone}%0a` +
                   `📍 *العنوان:* ${address}%0a%0a` +
@@ -268,7 +268,16 @@ window.checkoutWhatsApp = async () => {
             total: finalTotal,
             date: new Date().toLocaleString('ar-EG')
         });
+// أضف هذا الجزء داخل دالة checkoutWhatsApp لكي يحفظ الطلب في المتصفح أيضاً
+const newOrder = {
+    date: new Date().toLocaleString('ar-EG'),
+    items: cart.map(i => i.name).join(' + '),
+    total: document.getElementById('final-total').textContent
+};
 
+let history = JSON.parse(localStorage.getItem('orderHistory')) || [];
+history.push(newOrder);
+localStorage.setItem('orderHistory', JSON.stringify(history));
         // تنظيف وفتح واتساب
         localStorage.removeItem('myCart');
         localStorage.removeItem('discount');

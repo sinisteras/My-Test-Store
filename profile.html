@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ملفي الشخصي - Urban Gent</title>
+    <title>ملفي الشخصي - Urban</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -99,33 +99,35 @@
     </div>
 
     <script src="script.js"></script>
-  <script>
+ <script>
     document.addEventListener('DOMContentLoaded', () => {
         // 1. جلب البيانات من الذاكرة
         const userName = localStorage.getItem('userName');
+        const userPhone = localStorage.getItem('userPhone'); // جلب الرقم
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
-        // 2. حماية الصفحة: إذا لم يسجل دخول، ارجعه لصفحة الدخول
+        // 2. حماية الصفحة
         if (!isLoggedIn || !userName) {
             window.location.href = 'login.html';
             return;
         }
 
-        // 3. عرض البيانات في الواجهة
-        document.getElementById('display-phone').textContent = userName;
+        // 3. عرض البيانات في الواجهة بشكل صحيح
+        document.getElementById('display-phone').textContent = userPhone || "غير مسجل"; 
         document.getElementById('welcome-msg').textContent = "أهلاً بك يا " + userName;
 
         // 4. جلب وعرض سجل الطلبات
         const ordersList = document.getElementById('orders-list');
+        // تأكد أن الاسم مطابق لما يتم حفظه عند الشراء
         const history = JSON.parse(localStorage.getItem('orderHistory')) || [];
 
         if (history.length > 0) {
             ordersList.innerHTML = history.reverse().map(order => `
                 <div class="order-box">
                     <div class="order-date">📅 ${order.date}</div>
-                    <div class="order-items">🛍️ ${order.items.join(' + ')}</div>
+                    <div class="order-items">🛍️ ${order.items}</div>
                     <div style="color: #1abc9c; font-weight: bold; margin-top: 5px;">
-                        الإجمالي: ${order.total} د.ع
+                        الإجمالي: ${order.total}
                     </div>
                 </div>
             `).join('');
@@ -133,6 +135,14 @@
             ordersList.innerHTML = '<p style="text-align: center; color: #999;">لا توجد طلبات سابقة حتى الآن.</p>';
         }
     });
+
+    // دالة تسجيل الخروج
+    function logoutUser() {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userPhone');
+        window.location.href = 'index.html';
+    }
 </script>
 </body>
 </html>
